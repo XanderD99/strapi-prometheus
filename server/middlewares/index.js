@@ -10,7 +10,7 @@ module.exports = {
       ...config.default,
       ...options
     }
-    options.excludeRoutes.push("/api/metrics");
+    options.excludeRoutes.push("/api/strapi-prometheus/metrics");
 
     return koaMiddleware(options);
   }
