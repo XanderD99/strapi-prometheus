@@ -7,6 +7,9 @@
     "description": "A wrapper plugin for prometheus metrics",
     "kind": "plugin"
   },
+  "scripts": {
+    "test": "echo \"no test specified\""
+  },
   "dependencies": {
     "prometheus-api-metrics": "^3.2.1"
   },
