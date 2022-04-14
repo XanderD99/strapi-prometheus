@@ -1,9 +1,9 @@
 {
   "name": "strapi-prometheus",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "A wrapper plugin for prometheus metrics.",
   "strapi": {
-    "name": "metrics",
+    "name": "strapi-prometheus",
     "description": "A wrapper plugin for prometheus metrics",
     "kind": "plugin"
   },
@@ -25,5 +25,13 @@
     "node": ">=12.x.x <=16.x.x",
     "npm": ">=6.0.0"
   },
-  "license": "MIT"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/XanderD99/strapi-prometheus.git"
+  },
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/XanderD99/strapi-prometheus/issues"
+  },
+  "homepage": "https://github.com/XanderD99/strapi-prometheus#readme"
 }
