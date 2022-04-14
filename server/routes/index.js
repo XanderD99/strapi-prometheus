@@ -5,7 +5,7 @@ module.exports = {
       {
         method: 'GET',
         path: '/',
-        handler: 'metrics.metrics',
+        handler: 'prometheus.metrics',
       },
     ]
   }

@@ -1,7 +1,7 @@
 'use strict';
 
-const metrics = require('./metrics')
+const prometheus = require('./prometheus')
 
 module.exports = {
-  metrics
+  prometheus
 };
