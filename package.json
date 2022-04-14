@@ -1,0 +1,26 @@
+{
+  "name": "prometheus_metrics",
+  "version": "1.0.0",
+  "description": "A wrapper plugin for prometheus metrics.",
+  "strapi": {
+    "name": "metrics",
+    "description": "A wrapper plugin for prometheus metrics",
+    "kind": "plugin"
+  },
+  "dependencies": {
+    "prometheus-api-metrics": "^3.2.1"
+  },
+  "author": {
+    "name": "XanderD99"
+  },
+  "maintainers": [
+    {
+      "name": "XanderD99"
+    }
+  ],
+  "engines": {
+    "node": ">=12.x.x <=16.x.x",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT"
+}
