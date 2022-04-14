@@ -8,6 +8,10 @@ A wrapper plugin around the `prometheus-api-metrics` package.
 npm i strapi-prometheus
 ```
 
+Metrics should be available at `<host>/api/strapi-prometheus/metrics`
+
+### Middleware
+
 Simply add the middleware to the middleware.js file.
 
 ```js
@@ -35,7 +39,7 @@ module.exports = [
 ];
 ```
 
-### Options
+#### Options
 
 | Option                   | Type      | Description | Default Value |
 |--------------------------|-----------|-------------|---------------|

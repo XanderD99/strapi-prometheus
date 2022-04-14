@@ -4,7 +4,7 @@ module.exports = {
     routes: [
       {
         method: 'GET',
-        path: '/',
+        path: '/metrics',
         handler: 'prometheus.metrics',
       },
     ]
