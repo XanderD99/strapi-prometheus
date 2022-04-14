@@ -4,8 +4,12 @@ const { register } = require('prom-client');
 
 module.exports = {
   async metrics(ctx) {
-    ctx.response.headers['Content-Type'] = register.contentType;
+    if (ctx.query && ctx.query.json) {
+      ctx.body = await register.getMetricsAsJSON();
+    } else {
+      ctx.response.headers['Content-Type'] = register.contentType;
 
-    ctx.body = await register.metrics();
+      ctx.body = await register.metrics();
+    }
   },
 };
