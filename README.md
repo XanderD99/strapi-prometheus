@@ -64,6 +64,12 @@ module.exports = [
 
 - **Strapi v4**
 
+## 👮‍♀️ Security
+
+By default no one can access the `/api/strapi-prometheus/metrics` url. You can give access to authenticated users or to the public from the user-permission roles, another option is creating a api key. Making this public is not recommended as a lot of data is shown.
+
+Use at own risk.
+
 ## 🖐 Requirements
 
 ### Minimum environment requirements
