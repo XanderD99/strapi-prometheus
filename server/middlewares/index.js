@@ -34,13 +34,13 @@ module.exports = {
 
       ctx.res.once('finish', () => {
         const delta = Date.now() - start;
-
-        if (ctx._matchedRoute === '/api/strapi-prometheus/metrics') return;
+        if (ctx._matchedRoute === `${strapi.config.api.rest.prefix}/metrics`) return;
         let route = `${Boolean(options.fullURL) ? ctx.url.split('?')[0] : ctx._matchedRoute || '/'}`;
         if (ctx.query && Boolean(options.includeQuery)) {
           const query = Object.keys(ctx.query).sort().map((queryParam) => `${queryParam}=<?>`).join('&')
           route = `${route}${query ? `?${query}` : ''}`;
         }
+        // add request duration metric
         httpRequestDuration.labels(ctx.method, route, ctx.status).observe(delta / 1000);
 
         // calculate request size
