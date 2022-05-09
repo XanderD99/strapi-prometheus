@@ -10,8 +10,9 @@
   "scripts": {
     "test": "echo \"no test specified\""
   },
-  "dependencies": {
-    "prom-client": "^14.0.1"
+  "peerDependencies": {
+    "prom-client": "^14.0.1",
+    "yup": "^0.32.11"
   },
   "author": {
     "name": "XanderD99"
