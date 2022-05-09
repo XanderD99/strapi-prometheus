@@ -6,6 +6,9 @@ module.exports = {
         method: 'GET',
         path: '/metrics',
         handler: 'prometheus.metrics',
+        config: {
+          prefix: ''
+        }
       },
     ]
   }
