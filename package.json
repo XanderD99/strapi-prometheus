@@ -30,7 +30,7 @@
     "type": "git",
     "url": "git+https://github.com/XanderD99/strapi-prometheus.git"
   },
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/XanderD99/strapi-prometheus/issues"
   },
