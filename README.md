@@ -2,19 +2,51 @@
 
 A simple middleware plugin that adds prometheus metrics to strapi using `prom-client`;
 
+## ✨ Features
+
+- Collect API metrics for each call
+  - Response time in seconds
+  - Request size in bytes
+  - Response size in bytes
+- Process Metrics as recommended by Prometheus [itself](https://prometheus.io/docs/instrumenting/writing_clientlibs/#standard-and-runtime-collectors)
+- Endpoint to retrieve the metrics - used for Prometheus scraping
+- Support custom metrics
+
 ## ⏳ Installation
 
 ```bash
 npm i strapi-prometheus
 ```
 
-Metrics should be available at `<host>/api/strapi-prometheus/metrics`
+### Plugin
 
-Get the metrics as a json by adding the json query `<host>/api/strapi-prometheus/metrics?json=1`
+```js
+// config/plugins.js
+
+// enable plugin with default configuration.
+module.exports = [
+  'strapi-prometheus': {
+    enabled: true,
+    config: {
+      // add prefix to all the prometheus metrics names.
+      prefix: '',
+
+      // use full url instead of matched url
+      fullURL: false,
+
+      // include url query in the url label
+      includeQuery: false,
+
+      // collect default metrics of `prom-client`
+      defaultMetrics: true,
+    }
+  }
+];
+```
 
 ### Middleware
 
-Simply add the middleware to the middleware.js file.
+If you want to collect response time in seconds, request size in bytes and response size in bytes add the middleware.
 
 ```js
 // config/middlewares.js
@@ -25,48 +57,15 @@ module.exports = [
 ];
 ```
 
-Or pass options to the middleware
+### Metrics
 
-```js
-// config/middlewares.js
+Metrics are exposed at `/api/metrics`.
 
-module.exports = [
-  // ...
-  {
-    name: 'plugin::strapi-prometheus.metrics',
-    config: {
-      fullURL: true,
-      includeQuery: true,
-    }
-  }
-];
-```
-
-#### Options
-
-| Option                   | Type      | Description | Default Value |
-|--------------------------|-----------|-------------|---------------|
-|fullURL|boolean|get full url instead of matched url. (with: /api/users/1, without: /api/users/:id)| false|
-|includeQuery|boolean|include the query in the path label| false|
-
-## ✨ Features
-
-- Collect API metrics for each call
-  - Response time in seconds
-  - Request size in bytes
-  - Response size in bytes
-- Process Metrics as recommended by Prometheus [itself](https://prometheus.io/docs/instrumenting/writing_clientlibs/#standard-and-runtime-collectors)
-- Endpoint to retrieve the metrics - used for Prometheus scraping
-  - Prometheus format
-- Support custom metrics
-
-## ⚙️ Versions
-
-- **Strapi v4**
+You can pass a format in the url to either get metrics in json format or plain text. Available options are `json` and `text`. Default is `text`. ex: `/api/metrics?format=text`
 
 ## 👮‍♀️ Security
 
-By default no one can access the `/api/strapi-prometheus/metrics` url. You can give access to authenticated users or to the public from the user-permission roles, another option is creating a api key. Making this public is not recommended as a lot of data is shown.
+By default no one can access the `/api/metrics` url. You can give access to authenticated users or to the public from the user-permission roles, another option is creating a api key. Making this public is not recommended as a lot of data is shown.
 
 Use at own risk.
 
@@ -82,3 +81,25 @@ We are following the [official Node.js releases timelines](https://nodejs.org/en
 ### Supported Strapi versions
 
 - Strapi v4.x
+
+## 📊 Prometheus example
+
+here is a basic example of prometheus config. In this example we assume that the metrics endpoint is not secured.
+
+```yml
+# prometheus.yaml
+
+global:
+  scrape_interval: 5s
+scrape_configs:
+  - job_name: "api"
+    metrics_path: "/api/metrics"
+    static_configs:
+      - targets: ["localhost:1337"]
+```
+
+## 📊 Grafana dashboards
+
+Here are some usefull dashboards you can start with. If you want to have your dashboard added feel free to open a PR.
+
+- [14565](https://grafana.com/grafana/dashboards/14565)
