@@ -38,8 +38,8 @@ module.exports = {
       ctx.res.once('finish', () => {
         const delta = Date.now() - start;
         if (ctx._matchedRoute === `${strapi.config.api.rest.prefix}/metrics`) return;
-        let route = `${options.fullURL ? ctx.url.split('?')[0] : ctx._matchedRoute || '/'}`;
-        if (ctx.query && options.includeQuery) {
+        let route = `${config.fullURL ? ctx.url.split('?')[0] : ctx._matchedRoute || '/'}`;
+        if (ctx.query && config.includeQuery) {
           const query = Object.keys(ctx.query).sort().map((queryParam) => `${queryParam}=<?>`).join('&')
           route = `${route}${query ? `?${query}` : ''}`;
         }
