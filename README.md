@@ -32,9 +32,13 @@ module.exports = [
       prefix: '',
 
       // use full url instead of matched url
+      // if true sets path label to `/api/models/1`
+      // if false sets path label as `/api/models/:id`
       fullURL: false,
 
       // include url query in the url label
+      // if true sets path label to `/api/models?limit=1`
+      // if false sets path label to `/api/models`
       includeQuery: false,
 
       // collect default metrics of `prom-client`
