@@ -1,6 +1,6 @@
 {
   "name": "strapi-prometheus",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "A wrapper plugin for prometheus metrics.",
   "strapi": {
     "name": "strapi-prometheus",
@@ -10,7 +10,7 @@
   "scripts": {
     "test": "echo \"no test specified\""
   },
-  "peerDependencies": {
+  "dependencies": {
     "prom-client": "^14.0.1",
     "yup": "^0.32.11"
   },
