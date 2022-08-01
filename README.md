@@ -88,7 +88,9 @@ We are following the [official Node.js releases timelines](https://nodejs.org/en
 
 ## 📊 Prometheus example
 
-here is a basic example of prometheus config. In this example we assume that the metrics endpoint is not secured.
+`⚠️ You need to create your own prometheus instance for this. This plugin does not do that for you!`
+
+here is a basic example of prometheus config. In this example we assume that the metrics endpoint is not secured. 
 
 ```yml
 # prometheus.yaml
