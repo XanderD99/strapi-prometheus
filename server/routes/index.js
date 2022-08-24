@@ -7,7 +7,10 @@ module.exports = {
         path: '/metrics',
         handler: 'prometheus.metrics',
         config: {
-          prefix: ''
+          prefix: '',
+          auth: {
+            scope: ['find']
+          }
         }
       },
     ]
