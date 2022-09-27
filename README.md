@@ -69,7 +69,7 @@ You can pass a format in the url to either get metrics in json format or plain t
 
 ## 👮‍♀️ Security
 
-By default no one can access the `/api/metrics` url. You can give access to authenticated users or to the public from the user-permission roles, another option is creating a api key. Making this public is not recommended as a lot of data is shown.
+By default no one can access the `/api/metrics` url. You can give access by creating an api token (users-permissions plugin not supported). Making this public is not recommended as a lot of data is shown.
 
 Use at own risk.
 
