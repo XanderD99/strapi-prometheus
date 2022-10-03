@@ -1,5 +1,5 @@
 "use strict";
-const { collectDefaultMetrics } = require('prom-client');
+const { collectDefaultMetrics, register } = require('prom-client');
 const { plugin_id } = require('./utils')
 
 module.exports = async ({ strapi }) => {
@@ -8,5 +8,9 @@ module.exports = async ({ strapi }) => {
 
   if (config.defaultMetrics) {
     collectDefaultMetrics({ prefix });
+  }
+
+  if (config.customLabels) {
+    register.setDefaultLabels(config.customLabels)
   }
 };
