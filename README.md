@@ -11,6 +11,7 @@ A simple middleware plugin that adds prometheus metrics to strapi using `prom-cl
 - Process Metrics as recommended by Prometheus [itself](https://prometheus.io/docs/instrumenting/writing_clientlibs/#standard-and-runtime-collectors)
 - Endpoint to retrieve the metrics - used for Prometheus scraping
 - Support custom metrics
+- Set custom labels
 
 ## ⏳ Installation
 
@@ -43,6 +44,11 @@ module.exports = [
 
       // collect default metrics of `prom-client`
       defaultMetrics: true,
+
+      // set custom/default labels to all the prometheus metrics
+      customLabels: {
+        name: "strapi-prometheus",
+      }
     }
   }
 ];
@@ -90,7 +96,7 @@ We are following the [official Node.js releases timelines](https://nodejs.org/en
 
 `⚠️ You need to create your own prometheus instance for this. This plugin does not do that for you!`
 
-here is a basic example of prometheus config. In this example we assume that the metrics endpoint is not secured. 
+here is a basic example of prometheus config. In this example we assume that the metrics endpoint is not secured.
 
 ```yml
 # prometheus.yaml

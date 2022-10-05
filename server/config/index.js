@@ -7,6 +7,7 @@ const schema = yup.object().shape({
   prefix: yup.string(),
   includeQuery: yup.boolean(),
   fullURL: yup.boolean(),
+  customLabels: yup.object(),
 });
 
 module.exports = {
@@ -14,6 +15,7 @@ module.exports = {
     defaultMetrics: true,
     includeQuery: false,
     fullURL: false,
+    customLabels: {},
   },
   validator: (config) => schema.validate(config),
 };
