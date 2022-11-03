@@ -1,5 +1,8 @@
 # Strapi prometheus plugin
 
+![](https://img.shields.io/npm/dt/strapi-prometheus.svg?maxAge=3600)
+![](https://img.shields.io/npm/v/strapi-prometheus?maxAge=3600)
+
 A simple middleware plugin that adds prometheus metrics to strapi using `prom-client`;
 
 ## ✨ Features
