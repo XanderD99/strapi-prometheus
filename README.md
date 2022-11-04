@@ -13,6 +13,7 @@ A simple middleware plugin that adds prometheus metrics to strapi using `prom-cl
   - Response size in bytes
 - Process Metrics as recommended by Prometheus [itself](https://prometheus.io/docs/instrumenting/writing_clientlibs/#standard-and-runtime-collectors)
 - Endpoint to retrieve the metrics - used for Prometheus scraping
+- Endpoint to get specific metric
 - Support custom metrics
 - Set custom labels
 
