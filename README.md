@@ -79,9 +79,16 @@ You can pass a format in the url to either get metrics in json format or plain t
 
 ## 👮‍♀️ Security
 
-By default no one can access the `/api/metrics` url. You can give access by creating an api token (users-permissions plugin not supported). Making this public is not recommended as a lot of data is shown.
+⚠️ Use at own risk.
 
-Use at own risk.
+By default no one can access the `/api/metrics` url. This is to prevent sensitive data from the metrics being exposed by default.
+
+To access the metrics you have 2 options:
+
+1. create an api token with either read only access or custom access to the metrics endpoints. If you don't know how to create an api token here is [a turorial](https://www.youtube.com/watch?v=dVQKqZYWyv4)
+2. using the user-permissions plugin: (NOT RECOMMENDED)
+    - create a user account and allow authorized users to query the endpoints. This does give the opportunity to every user to query your metrics.
+    - allow public role to query the metric endpoints. This should never be done, unless really necessary.
 
 ## 🖐 Requirements
 
