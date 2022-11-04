@@ -8,9 +8,6 @@ module.exports = {
         handler: 'prometheus.find',
         config: {
           prefix: '',
-          auth: {
-            scope: ['find']
-          }
         }
       },
       {
@@ -19,9 +16,6 @@ module.exports = {
         handler: 'prometheus.findOne',
         config: {
           prefix: '',
-          auth: {
-            scope: ['findOne']
-          }
         }
       },
     ]
