@@ -1,6 +1,7 @@
 "use strict";
 const { collectDefaultMetrics, register } = require('prom-client');
 const { plugin_id } = require('./utils')
+const { metrics } = require('./middlewares')
 
 module.exports = async ({ strapi }) => {
   const config = strapi.config.get(`plugin.${plugin_id}`);
@@ -13,4 +14,6 @@ module.exports = async ({ strapi }) => {
   if (config.customLabels) {
     register.setDefaultLabels(config.customLabels)
   }
+
+  strapi.server.use(metrics(config, { strapi }))
 };

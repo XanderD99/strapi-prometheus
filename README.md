@@ -11,7 +11,7 @@ A simple middleware plugin that adds prometheus metrics to strapi using `prom-cl
   - Response time in seconds
   - Request size in bytes
   - Response size in bytes
-- Process Metrics as recommended by Prometheus [itself](https://prometheus.io/docs/instrumenting/writing_clientlibs/#standard-and-runtime-collectors)
+- Process Metrics as recommended by [Prometheus](https://prometheus.io/docs/instrumenting/writing_clientlibs/#standard-and-runtime-collectors)
 - Endpoint to retrieve the metrics - used for Prometheus scraping
 - Endpoint to get specific metric
 - Support custom metrics
@@ -55,19 +55,6 @@ module.exports = [
       }
     }
   }
-];
-```
-
-### Middleware
-
-If you want to collect response time in seconds, request size in bytes and response size in bytes add the middleware.
-
-```js
-// config/middlewares.js
-
-module.exports = [
-  // ...
-  'plugin::strapi-prometheus.metrics',
 ];
 ```
 
