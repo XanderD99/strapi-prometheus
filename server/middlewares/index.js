@@ -6,8 +6,7 @@ const { plugin_id } = require('../utils')
 const labelNames = ['method', 'path', 'status'];
 
 module.exports = {
-  metrics: (_, { strapi }) => {
-    const config = strapi.config.get(`plugin.${plugin_id}`);
+  metrics: (config, { strapi }) => {
     const prefix = config.prefix && config.prefix !== '' && !config.prefix.endsWith('_') ? `${config.prefix}_` : '';
 
     const httpRequestDuration = new Histogram({
@@ -47,11 +46,11 @@ module.exports = {
         httpRequestDuration.labels(ctx.method, route, ctx.status).observe(delta / 1000);
 
         // calculate request size
-        const requestSize = parseInt(ctx.request.get('content-length')) || 0;
+        const requestSize = parseInt(ctx.request.get('Content-Length')) || parseInt(ctx.request.get('content-length')) || 0;
         httpRequestSizeBytes.labels(ctx.method, route, ctx.status).observe(requestSize);
 
         // calculate response size
-        const responseSize = parseInt(ctx.response.get('Content-Length')) || 0;
+        const responseSize = parseInt(ctx.response.get('Content-Length')) || parseInt(ctx.response.get('content-length')) || 0;
         httpResponseSizeBytes.labels(ctx.method, route, ctx.status).observe(responseSize);
       });
     };
