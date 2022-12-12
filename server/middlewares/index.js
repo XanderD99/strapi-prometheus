@@ -6,7 +6,8 @@ const { plugin_id } = require('../utils')
 const labelNames = ['method', 'path', 'status'];
 
 module.exports = {
-  metrics: (config, { strapi }) => {
+  metrics: ({ strapi }) => {
+    const config = strapi.config.get(`plugin.${plugin_id}`);
     const prefix = config.prefix && config.prefix !== '' && !config.prefix.endsWith('_') ? `${config.prefix}_` : '';
 
     const httpRequestDuration = new Histogram({
