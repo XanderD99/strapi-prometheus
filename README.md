@@ -11,6 +11,7 @@ A simple middleware plugin that adds prometheus metrics to strapi using `prom-cl
   - Response time in seconds
   - Request size in bytes
   - Response size in bytes
+  - Number of open connections
 - Process Metrics as recommended by [Prometheus](https://prometheus.io/docs/instrumenting/writing_clientlibs/#standard-and-runtime-collectors)
 - Endpoint to retrieve the metrics - used for Prometheus scraping
 - Endpoint to get specific metric
@@ -37,17 +38,20 @@ module.exports = [
       prefix: '',
 
       // use full url instead of matched url
-      // if true sets path label to `/api/models/1`
-      // if false sets path label as `/api/models/:id`
+      // true  => path label: `/api/models/1`
+      // false => path label: `/api/models/:id`
       fullURL: false,
 
       // include url query in the url label
-      // if true sets path label to `/api/models?limit=1`
-      // if false sets path label to `/api/models`
+      // true  => path label: `/api/models?limit=1`
+      // false => path label: `/api/models`
       includeQuery: false,
 
       // collect default metrics of `prom-client`
       defaultMetrics: true,
+
+      // interval at which rate metrics are collected in ms
+      interval: 10_000
 
       // set custom/default labels to all the prometheus metrics
       customLabels: {
