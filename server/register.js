@@ -7,7 +7,6 @@ function getConnections(strapi, metric) {
     if (error) {
       debug('Error while collection number of open connections', error);
     } else {
-      console.log('count', count)
       metric.set(count)
     }
   })
