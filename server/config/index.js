@@ -1,7 +1,7 @@
 'use strict';
 
+const { Registry } = require('prom-client');
 const yup = require('yup');
-
 
 const schema = yup.object().shape({
   defaultMetrics: yup.boolean().default(true),
@@ -14,11 +14,18 @@ const schema = yup.object().shape({
 
 module.exports = {
   default: () => ({
-    defaultMetrics: true,
+    enabledMetrics: {
+      process: true,
+      koa: true,
+      http: true,
+      apollo: true,
+    },
     interval: 10_000,
     includeQuery: false,
     fullURL: false,
     customLabels: {},
+    register: new Registry(),
+    registers: [],
   }),
   validator: async (config) => {
     await schema.validate(config);

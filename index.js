@@ -1,0 +1,1 @@
+exports.apolloPrometheusPlugin = require('./apollo')

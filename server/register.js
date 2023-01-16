@@ -1,33 +1,46 @@
 "use strict";
-const { collectDefaultMetrics, register, Gauge } = require('prom-client');
+const { collectDefaultMetrics } = require('prom-client');
+const { httpMetrics, apolloMetrics, koaMetrics, metricNames } = require('./services/metrics');
 const { plugin_id } = require('./utils')
 
-function getConnections(strapi, metric) {
+function getConnections(strapi) {
+  const { service } = strapi.plugin(plugin_id);
+
   strapi.server.httpServer.getConnections((error, count) => {
     if (error) {
       debug('Error while collection number of open connections', error);
     } else {
-      metric.set(count)
+      service('metrics').get(metricNames.koa.openConnections)?.set(count)
     }
   })
 }
 
 module.exports = async ({ strapi }) => {
-  const config = strapi.config.get(`plugin.${plugin_id}`);
-  const prefix = config.prefix && config.prefix !== '' && !config.prefix.endsWith('_') ? `${config.prefix}_` : '';
+  const { config, service } = strapi.plugin(plugin_id);
 
-  if (config.customLabels) {
-    register.setDefaultLabels(config.customLabels)
+  const prefix = service('prefix');
+  const register = service('registry');
+  const metrics = service('metrics');
+
+  if (config('customLabels')) {
+    register.setDefaultLabels(config('customLabels'));
   }
 
-  if (config.defaultMetrics) {
-    collectDefaultMetrics({ prefix, timeout: config.timeout });
+  const metricsConfig = config('enabledMetrics');
+  if (metricsConfig.process) {
+    collectDefaultMetrics({ prefix, timeout: config.timeout, register });
+  }
 
-    const nrConnections = new Gauge({
-      name: `${prefix}number_of_open_connections`,
-      help: 'Number of open connections to the Koa.js server',
-    });
+  if (metricsConfig.koa) {
+    metrics.register(koaMetrics)
+    setInterval(() => getConnections(strapi), config.interval).unref()
+  }
 
-    setInterval(() => getConnections(strapi, nrConnections), config.interval).unref()
+  if (metricsConfig.http) {
+    metrics.register(httpMetrics)
+  }
+
+  if (metricsConfig.apollo) {
+    metrics.register(apolloMetrics)
   }
 };
