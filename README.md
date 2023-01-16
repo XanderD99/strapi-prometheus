@@ -12,11 +12,16 @@ A simple middleware plugin that adds prometheus metrics to strapi using `prom-cl
   - Request size in bytes
   - Response size in bytes
   - Number of open connections
+- Collect apollo Graphql metrics
+  - query duration
+  - queries validated
+  - queries parsed
 - Process Metrics as recommended by [Prometheus](https://prometheus.io/docs/instrumenting/writing_clientlibs/#standard-and-runtime-collectors)
 - Endpoint to retrieve the metrics - used for Prometheus scraping
 - Endpoint to get specific metric
-- Support custom metrics
 - Set custom labels
+- custom registrer
+- mutliple registers
 
 ## ⏳ Installation
 
@@ -47,8 +52,13 @@ module.exports = [
       // false => path label: `/api/models`
       includeQuery: false,
 
-      // collect default metrics of `prom-client`
-      defaultMetrics: true,
+      // metrics that will be enabled, by default they are all enabled.
+      enabledMetrics: {
+        koa: true, // koa metrics
+        process: true // metrics regarding the running process
+        http: true // http metrics like response time and size
+        apollo: true // metrics regarding graphql
+      },
 
       // interval at which rate metrics are collected in ms
       interval: 10_000
@@ -56,10 +66,33 @@ module.exports = [
       // set custom/default labels to all the prometheus metrics
       customLabels: {
         name: "strapi-prometheus",
-      }
+      },
     }
   }
 ];
+```
+
+#### Graphql setup
+
+```js
+// config/plugins.js
+const { apolloPrometheusPlugin } = require('strapi-prometheus')
+
+module.exports = [
+  'strapi-prometheus': {
+    enabled: true,
+  },
+  graphql: {
+    enabled: true,
+    config: {
+      apolloServer: {
+        plugins: [apolloPrometheusPlugin], // add the plugin to get apollo metrics
+        tracing: true, // this must be true to get some of the data needed to create the metrics
+      }
+    }
+  }
+}
+
 ```
 
 ### Metrics
