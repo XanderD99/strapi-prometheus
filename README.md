@@ -2,6 +2,8 @@
 
 ![strapi-prometheus-downloads](https://img.shields.io/npm/dt/strapi-prometheus.svg?maxAge=3600)
 ![strapi-prometheus-version](https://img.shields.io/npm/v/strapi-prometheus?maxAge=3600)
+[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/xanderd)
+
 
 A simple middleware plugin that adds prometheus metrics to strapi using `prom-client`;
 
@@ -150,3 +152,4 @@ scrape_configs:
 Here are some usefull dashboards you can start with. If you want to have your dashboard added feel free to open a PR.
 
 - [14565](https://grafana.com/grafana/dashboards/14565)
+
