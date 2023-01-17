@@ -2,6 +2,8 @@
 
 ![strapi-prometheus-downloads](https://img.shields.io/npm/dt/strapi-prometheus.svg?maxAge=3600)
 ![strapi-prometheus-version](https://img.shields.io/npm/v/strapi-prometheus?maxAge=3600)
+
+
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/xanderd)
 
 
