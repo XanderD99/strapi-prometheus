@@ -59,13 +59,13 @@ module.exports = [
       // metrics that will be enabled, by default they are all enabled.
       enabledMetrics: {
         koa: true, // koa metrics
-        process: true // metrics regarding the running process
-        http: true // http metrics like response time and size
-        apollo: true // metrics regarding graphql
+        process: true, // metrics regarding the running process
+        http: true, // http metrics like response time and size
+        apollo: true, // metrics regarding graphql
       },
 
       // interval at which rate metrics are collected in ms
-      interval: 10_000
+      interval: 10_000,
 
       // set custom/default labels to all the prometheus metrics
       customLabels: {
