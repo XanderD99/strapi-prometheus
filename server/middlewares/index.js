@@ -9,27 +9,27 @@ module.exports = {
     const metrics = service('metrics');
 
     return async (ctx, next) => {
-      const start = Date.now();
+      const requestEnd = metrics.get(metricNames.HTTP.requestDuration)?.startTimer({ method: ctx.method });
       await next();
 
       ctx.res.once('finish', () => {
-        const delta = Date.now() - start;
         if (ctx._matchedRoute === `${strapi.config.api.rest.prefix}/metrics`) return;
-        let route = `${config('fullURL') ? ctx.url.split('?')[0] : ctx._matchedRoute || '/'}`;
+        let path = `${config('fullURL') ? ctx.url.split('?')[0] : ctx._matchedRoute || '/'}`;
         if (ctx.query && config('includeQuery')) {
           const query = Object.keys(ctx.query).sort().map((queryParam) => `${queryParam}=<?>`).join('&')
-          route = `${route}${query ? `?${query}` : ''}`;
+          path = `${path}${query ? `?${query}` : ''}`;
         }
+
         // add request duration metric
-        metrics.get(metricNames.HTTP.requestDuration)?.labels(ctx.method, route, ctx.status).observe(delta / 1000);
+        requestEnd({ path, status: ctx.status });
 
         // calculate request size
         const requestSize = parseInt(ctx.request.get('Content-Length')) || parseInt(ctx.request.get('content-length')) || 0;
-        metrics.get(metricNames.HTTP.requestSize)?.labels(ctx.method, route, ctx.status).observe(requestSize);
+        metrics.get(metricNames.HTTP.requestSize)?.labels(ctx.method, path, ctx.status).observe(requestSize);
 
         // calculate response size
         const responseSize = parseInt(ctx.response.get('Content-Length')) || parseInt(ctx.response.get('content-length')) || 0;
-        metrics.get(metricNames.HTTP.responseSize)?.labels(ctx.method, route, ctx.status).observe(responseSize);
+        metrics.get(metricNames.HTTP.responseSize)?.labels(ctx.method, path, ctx.status).observe(responseSize);
       });
     };
   }
