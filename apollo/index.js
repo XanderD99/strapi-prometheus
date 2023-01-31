@@ -45,7 +45,7 @@ module.exports = {
   },
   async requestDidStart(requestContext) {
     const { service } = strapi.plugin(plugin_id)
-    const start = Date.now()
+    const requestEnd = service('metrics').get(metricNames.apollo.query.duration)?.startTimer()
 
     return {
       async parsingDidStart(context) {
@@ -56,7 +56,6 @@ module.exports = {
           service('metrics').get(metricNames.apollo.query.parsed)?.labels({ ...labels, status }).inc()
         }
       },
-
       async validationDidStart(context) {
         const labels = getLabelsFromContext(context);
 
@@ -65,24 +64,22 @@ module.exports = {
           service('metrics').get(metricNames.apollo.query.validation)?.labels({ ...labels, status }).inc()
         }
       },
-
       async didResolveOperation(context) {
         const labels = getLabelsFromContext(context);
         service('metrics').get(metricNames.apollo.query.resolved)?.labels({ ...labels }).inc()
       },
-
       async executionDidStart(context) {
         const labels = getLabelsFromContext(context);
 
         return {
           willResolveField(field) {
-            const fieldResolveStart = Date.now();
+            const resolveEnd = service('metrics').get(metricNames.apollo.query.fieldDuration)?.startTimer({ ...labels });
 
             return (error) => {
               const status = error ? 'failed' : 'success';
               const fieldLabels = getLabelsFromFieldResolver(field);
 
-              service('metrics').get(metricNames.apollo.query.fieldDuration)?.labels({ ...labels, ...fieldLabels, status }).observe((Date.now() - fieldResolveStart) / 1000);
+              resolveEnd({ ...fieldLabels, status });
             };
           },
 
@@ -92,12 +89,11 @@ module.exports = {
           }
         }
       },
-
       async willSendResponse(context) {
         const status = (context.errors?.length ?? 0) === 0 ? 'success' : 'failed'
 
         const labels = getLabelsFromContext(context);
-        service('metrics').get(metricNames.apollo.query.duration)?.labels({ ...labels, status }).observe((Date.now() - start) / 1000)
+        requestEnd({ status, ...labels })
       }
     }
   }
