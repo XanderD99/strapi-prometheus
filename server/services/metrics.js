@@ -6,19 +6,19 @@ exports.metricNames = {
     openConnections: 'number_of_open_connections'
   },
   HTTP: {
-    requestDuration: 'http_request_duration_second',
+    requestDuration: 'http_request_duration_ms',
     requestSize: 'http_request_size_bytes',
     responseSize: 'http_response_size_bytes'
   },
   apollo: {
     server: 'apollo_server',
     query: {
-      duration: 'apollo_query_duration_seconds',
+      duration: 'apollo_query_duration_ms',
       parsed: 'apollo_query_parsed',
       validation: 'apollo_query_validation',
       resolved: 'apollo_query_resolved',
       executed: 'apollo_query_executed',
-      fieldDuration: 'apollo_query_field_resolution_duration'
+      fieldDuration: 'apollo_query_field_resolution_duration_ms'
     },
   }
 }
@@ -35,7 +35,7 @@ const httpLabelNames = ['method', 'path', 'status'];
 exports.httpMetrics = [
   {
     name: this.metricNames.HTTP.requestDuration,
-    help: 'Duration of HTTP requests in seconds',
+    help: 'Duration of HTTP requests in miliseconds',
     labelNames: httpLabelNames,
     buckets: [0.001, 0.005, 0.015, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5],
     type: Histogram
@@ -71,7 +71,7 @@ exports.apolloMetrics = [
     help: 'duration in seconds of a query',
     type: Histogram,
     labelNames: queryLabelNames,
-    bucket: [0.001, 0.005, 0.015, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5]
+    buckets: [0.001, 0.005, 0.015, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5]
   },
   {
     name: this.metricNames.apollo.query.parsed,
@@ -102,7 +102,7 @@ exports.apolloMetrics = [
     help: 'The total duration in seconds for resolving fields.',
     type: Histogram,
     labelNames: fieldLabelNames,
-    bucket: [0.001, 0.005, 0.015, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5]
+    buckets: [0.001, 0.005, 0.015, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5]
   }
 ]
 
