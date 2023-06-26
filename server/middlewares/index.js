@@ -7,11 +7,13 @@ module.exports = {
   metrics: ({ strapi }) => {
     const { config, service } = strapi.plugin(plugin_id);
     const metrics = service('metrics');
+    const isHTTPMetricEnabled = config('enabledMetrics.http');
 
     return async (ctx, next) => {
       const requestEnd = metrics.get(metricNames.HTTP.requestDuration)?.startTimer({ method: ctx.method });
       await next();
 
+      if (!isHTTPMetricEnabled) return;
       ctx.res.once('finish', () => {
         if (ctx._matchedRoute === `${strapi.config.api.rest.prefix}/metrics`) return;
         let path = `${config('fullURL') ? ctx.url.split('?')[0] : ctx._matchedRoute || '/'}`;
