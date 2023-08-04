@@ -1,4 +1,4 @@
-const { Gauge, Histogram, Counter } = require('prom-client');
+const { Gauge, Histogram, Counter, Registry } = require('prom-client');
 const { plugin_id } = require('../utils')
 
 exports.metricNames = {
@@ -37,7 +37,7 @@ exports.httpMetrics = [
     name: this.metricNames.HTTP.requestDuration,
     help: 'Duration of HTTP requests in seconds',
     labelNames: httpLabelNames,
-    buckets: [0.001, 0.005, 0.015, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5],
+    buckets: [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 5, 10],
     type: Histogram
   },
   {
@@ -71,7 +71,7 @@ exports.apolloMetrics = [
     help: 'duration in seconds of a query',
     type: Histogram,
     labelNames: queryLabelNames,
-    buckets: [0.001, 0.005, 0.015, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5]
+    buckets: [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 5, 10]
   },
   {
     name: this.metricNames.apollo.query.parsed,
@@ -102,15 +102,14 @@ exports.apolloMetrics = [
     help: 'The total duration in seconds for resolving fields.',
     type: Histogram,
     labelNames: fieldLabelNames,
-    buckets: [0.001, 0.005, 0.015, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5]
+    buckets: [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 5, 10]
   }
 ]
 
 exports.service = function () {
   const metrics = new Map();
 
-  const { service } = strapi.plugin(plugin_id);
-
+  const { service, config } = strapi.plugin(plugin_id);
   const register = service('registry');
 
   return {
@@ -126,8 +125,9 @@ exports.service = function () {
         return strapi.log.error(metric.name, 'already exists')
       }
 
+      const prefix = config('prefix') ? `${config('prefix')}_` : '';
       const options = {
-        name: `${metric.name}`,
+        name: `${prefix}${metric.name}`,
         help: metric.help,
         buckets: metric.buckets || [],
         labelNames: metric.labelNames || [],

@@ -18,7 +18,8 @@ function getConnections(strapi) {
 module.exports = async ({ strapi }) => {
   const { config, service } = strapi.plugin(plugin_id);
 
-  const prefix = config('prefix');
+  const prefix = config('prefix') ? `${config('prefix')}_` : undefined;
+
   const register = service('registry');
   const metrics = service('metrics');
 
