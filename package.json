@@ -22,10 +22,6 @@
       "name": "XanderD99"
     }
   ],
-  "engines": {
-    "node": ">=14.19.1 <=18.x.x",
-    "npm": ">=6.0.0"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/XanderD99/strapi-prometheus.git"
