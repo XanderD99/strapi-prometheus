@@ -6,6 +6,7 @@ const controllers = require('./controllers');
 const routes = require('./routes');
 const middlewares = require('./middlewares');
 const bootstrap = require('./bootstrap');
+const destroy = require('./destroy');
 const services = require('./services')
 
 module.exports = {
@@ -15,5 +16,6 @@ module.exports = {
   routes,
   middlewares,
   bootstrap,
+  destroy,
   services
 };

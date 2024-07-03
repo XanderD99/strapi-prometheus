@@ -1,6 +1,6 @@
 {
   "name": "strapi-prometheus",
-  "version": "1.8.1",
+  "version": "1.9.0",
   "description": "A wrapper plugin for prometheus metrics.",
   "strapi": {
     "name": "strapi-prometheus",

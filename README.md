@@ -69,6 +69,16 @@ module.exports = [
       customLabels: {
         name: "strapi-prometheus",
       },
+      
+      // run metrics on seperate server / port
+      server: {
+        // when enabled metrics will run seperatly from the strapi instance. It will still go up / down with strapi
+        // if disabled it will create /api/metrics endpoint on main strapi instance
+        enabled: false
+        port: 9000,
+        host: 'localhost',
+        path: '/metrics',
+      }
     }
   }
 ];
