@@ -8,7 +8,7 @@ module.exports = ({ strapi }) => {
 
   return {
     async find(ctx) {
-      if (!enabled) return ctx.notFound();
+      if (enabled) return ctx.notFound();
       const register = service('registry');
   
       switch (ctx.query.format || 'text') {
@@ -25,7 +25,7 @@ module.exports = ({ strapi }) => {
       }
     },
     async findOne(ctx) {
-      if (!enabled) return ctx.notFound();
+      if (enabled) return ctx.notFound();
       const register = service('registry');
   
       switch (ctx.query.format || 'text') {
