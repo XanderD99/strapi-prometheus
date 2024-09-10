@@ -29,7 +29,6 @@ const schema = yup.object().shape({
 
 module.exports = {
   default: (test) => {
-    console.log(schema.default())
     return {
       register: new Registry(),
       ...schema.default(),
