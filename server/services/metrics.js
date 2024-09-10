@@ -1,4 +1,4 @@
-const { Gauge, Histogram, Counter, Registry } = require('prom-client');
+const { Gauge, Histogram, Counter, Registry, exponentialBuckets, linearBuckets } = require('prom-client');
 const { plugin_id } = require('../utils')
 
 exports.metricNames = {
@@ -37,21 +37,23 @@ exports.httpMetrics = [
     name: this.metricNames.HTTP.requestDuration,
     help: 'Duration of HTTP requests in seconds',
     labelNames: httpLabelNames,
-    buckets: [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 5, 10],
+    // This setup should give you more granularity at smaller request durations, and buckets stopping around 10 seconds
+    buckets: exponentialBuckets(.001, 1.6, 14),
     type: Histogram
   },
   {
     name: this.metricNames.HTTP.requestSize,
     help: 'Size of HTTP requests in bytes',
     labelNames: httpLabelNames,
-    buckets: [5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000],
+    // This will give you good coverage up to around 128 MB.
+    buckets: exponentialBuckets(1024, 2, 18),
     type: Histogram
   },
   {
     name: this.metricNames.HTTP.responseSize,
     help: 'Size of HTTP respone in bytes',
     labelNames: httpLabelNames,
-    buckets: [5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000, 10000],
+    buckets: exponentialBuckets(1024, 2, 18),
     type: Histogram
   }
 ]
@@ -71,7 +73,7 @@ exports.apolloMetrics = [
     help: 'duration in seconds of a query',
     type: Histogram,
     labelNames: queryLabelNames,
-    buckets: [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 5, 10]
+    buckets: exponentialBuckets(.001, 1.6, 14)
   },
   {
     name: this.metricNames.apollo.query.parsed,
@@ -102,7 +104,7 @@ exports.apolloMetrics = [
     help: 'The total duration in seconds for resolving fields.',
     type: Histogram,
     labelNames: fieldLabelNames,
-    buckets: [0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 1, 2, 5, 10]
+    buckets: exponentialBuckets(.001, 1.6, 14)
   }
 ]
 
@@ -127,10 +129,8 @@ exports.service = function () {
 
       const prefix = config('prefix') ? `${config('prefix')}_` : '';
       const options = {
+        ...metric,
         name: `${prefix}${metric.name}`,
-        help: metric.help,
-        buckets: metric.buckets || [],
-        labelNames: metric.labelNames || [],
         registers: [register]
       }
 

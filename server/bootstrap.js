@@ -12,5 +12,4 @@ module.exports = ({ strapi }) => {
     const register = service('registry');
     strapi.metrics = new MetricServer(server, register, strapi.log)
   }
-  
 }
