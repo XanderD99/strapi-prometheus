@@ -54,12 +54,12 @@ module.exports = [
       // false => path label: `/api/models`
       includeQuery: false,
 
-      // metrics that will be enabled, by default they are all enabled.
+      // metrics that will be enabled.
       enabledMetrics: {
         koa: true, // koa metrics
         process: true, // metrics regarding the running process
         http: true, // http metrics like response time and size
-        apollo: true, // metrics regarding graphql
+        apollo: false, // metrics regarding graphql
       },
 
       // interval at which rate metrics are collected in ms
@@ -94,6 +94,11 @@ const { apolloPrometheusPlugin } = require('strapi-prometheus')
 module.exports = [
   'strapi-prometheus': {
     enabled: true,
+    config: {
+      enabledMetrics: {
+        apollo: true
+      },
+    }
   },
   graphql: {
     enabled: true,
