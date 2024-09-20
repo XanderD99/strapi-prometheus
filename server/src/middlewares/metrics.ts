@@ -44,7 +44,7 @@ export default async (ctx, next) => {
   const labels = { path: ctx.path, method: ctx.method }
 
   httpActiveRequests.inc(labels)
-  const end = requestDurationSeconds.startTimer({ method: ctx.method });
+  const end = requestDurationSeconds.startTimer(labels);
   await next();
 
   ctx.res.once('finish', () => {
