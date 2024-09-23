@@ -27,7 +27,7 @@ npm i strapi-prometheus
 
 // enable plugin with default configuration.
 module.exports = [
-  'strapi-prometheus': {
+  prometheus: {
     enabled: true,
     config: {
       // see collectDefaultMetricsOption of prom-client
