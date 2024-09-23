@@ -38,6 +38,7 @@ module.exports = [
   }
 ];
 ```
+
 ## 👮‍♀️ Security
 
 > [!CAUTION]
@@ -85,12 +86,11 @@ Here are some usefull dashboards you can start with. If you want to have your da
 
 - [14565](https://grafana.com/grafana/dashboards/14565)
 
-## v1 -> v2 migration guide
+## v1 -> v2 migration guid
 
 A lot has changed from v1 to v2 other then strapi v5 support.
 
 Firstly check the new configuration options those have been simplified a lot.
-For starters the name has been updated a little bit to `prometheus` instead of `strapi-prometheus`
 From v2 forwards a separate server that runs disconnected from strapi is the default behaviour. This can be disabled by passing `server: false` to the config.
 
 Setting a custom registry has also been removed in favor of using the default register provided by the `prom-client` package. This allows us to create any metric at any place in our apps, instead of having to register it using this plugin. This gives you all the freedom of what to do with your custom metrics.

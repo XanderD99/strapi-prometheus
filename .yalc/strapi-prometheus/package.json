@@ -22,13 +22,6 @@
     "verify": "strapi-plugin verify",
     "test:ts:back": "run -T tsc -p server/tsconfig.json"
   },
-  "devDependencies": {
-    "@strapi/sdk-plugin": "^5.2.6",
-    "@strapi/strapi": "^5.0.0",
-    "@strapi/typescript-utils": "^5.0.0",
-    "prettier": "^3.3.3",
-    "typescript": "^5.6.2"
-  },
   "peerDependencies": {
     "@strapi/sdk-plugin": "^5.2.6",
     "@strapi/strapi": "^5.0.0",
@@ -56,5 +49,6 @@
     {
       "name": "XanderD99"
     }
-  ]
+  ],
+  "yalcSig": "a3989320ed35c0cc6d45ead4bed62a8b"
 }
