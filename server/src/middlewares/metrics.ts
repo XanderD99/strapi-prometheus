@@ -5,21 +5,35 @@ const requestDurationSeconds = new Histogram({
   name: 'http_request_duration_seconds',
   help: 'Duration of HTTP requests in seconds',
   labelNames: ['method', 'path', 'status'],
-  buckets: exponentialBuckets(.001, 1.6, 14)
+  buckets: [
+    0.001, // 1 ms
+    0.005, // 5 ms
+    0.01,  // 10 ms
+    0.05,  // 50 ms
+    0.1,   // 100 ms
+    0.2,   // 200 ms
+    0.5,   // 500 ms
+    1,     // 1 second
+    2,     // 2 seconds
+    5,     // 5 seconds
+    10,    // 10 seconds
+    20,    // 20 seconds
+    30     // 30 seconds
+  ]
 });
 
 const requestContentLengthBytes = new Histogram({
   name: 'http_request_content_length_bytes',
   help: 'The size of the payload being sent to the server',
   labelNames: ['method', 'path', 'status'],
-  buckets: exponentialBuckets(512000, 2, 10) // Buckets from 500KB up to ~500MB
+  buckets: exponentialBuckets(256000, 2, 12) // Buckets starting from 250 KB to 1000 MB
 });
 
 const responseContentLengthBytes = new Histogram({
   name: 'http_response_content_length_bytes',
   help: 'The size of the payload being sent to the server',
   labelNames: ['method', 'path', 'status'],
-  buckets: exponentialBuckets(512000, 2, 10) // Buckets from 500KB up to ~500MB
+  buckets: exponentialBuckets(256000, 2, 12) // Buckets starting from 250 KB to 1000 MB
 });
 
 const httpRequestsTotal = new Counter({
@@ -59,12 +73,14 @@ export default async (ctx, next) => {
 
     httpRequestsTotal.inc({ ...labels, status: ctx.status })
 
-    // calculate request size
-    const requestSize = parseInt(ctx.request.get('Content-Length')) || parseInt(ctx.request.get('content-length')) || 0;
-    requestContentLengthBytes.observe({ ...labels, status: ctx.status }, requestSize);
+    const requestContentLenght = ctx.request.get('Content-Length') || ctx.request.get('content-length');
+    if (requestContentLenght) {
+      requestContentLengthBytes.observe({ ...labels, status: ctx.status }, parseInt(requestContentLenght));
+    }
 
-    // calculate response size
-    const responseSize = parseInt(ctx.response.get('Content-Length')) || parseInt(ctx.response.get('content-length')) || 0;
-    responseContentLengthBytes.observe({ ...labels, status: ctx.status }, responseSize);
+    const responseConentLength = ctx.response.get('Content-Length') || ctx.response.get('content-length');
+    if (requestContentLenght) {
+      responseContentLengthBytes.observe({ ...labels, status: ctx.status }, parseInt(responseConentLength));
+    }
   });
 };
