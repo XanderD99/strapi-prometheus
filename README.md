@@ -38,6 +38,19 @@ module.exports = [
   }
 ];
 ```
+
+## 📊 Metrics
+
+|name|description|type|buckets|
+|---|---|---|---|
+|http_request_duration_seconds|Duration of HTTP requests in seconds|Histogram|`exponentialBuckets(.001, 1.5, 12)`. Buckets from 1ms up to 10 seconds|
+|http_request_content_length_bytes|Histogram of the size of payloads sent to the server, measured in bytes.|Histogram|`exponentialBuckets(512000, 2, 10)`. Buckets from 500KB up to ~500MB|
+|http_response_content_length_bytes|Histogram of the size of payloads sent by the server, measured in bytes.|Histogram|`exponentialBuckets(512000, 2, 10)`. Buckets from 500KB up to ~500MB|
+|http_requests_total|Total number of HTTP requests|Counter||
+|http_active_requests|Number of active HTTP requests|Gauge||
+|http_errors_total|Total number of HTTP errors|Counter||
+|strapi_version_info|Strapi version info|Gauge||
+
 ## 👮‍♀️ Security
 
 > [!CAUTION]
@@ -47,16 +60,7 @@ To keep your information secure, the plugin by default starts a new server on po
 
 If this is not an option for you. You can disable this by updating the server config and setting it to `false`. This will then create an `/metrics` endpoint on your strapi server. This is secured by the strapi auth middleware so you will need to create a API token to be able to access it. I well mention it again this is not the recommended way, you should try and use the separate server.
 
-## 🖐 Requirements
-
-### Minimum environment requirements
-
-- Node.js `>=14.x.x`
-- NPM `>=6.x.x`
-
-We are following the [official Node.js releases timelines](https://nodejs.org/en/about/releases/).
-
-### Supported Strapi versions
+## 🖐 Supported Strapi versions
 
 - Strapi v4.x (strapi-prometheus v1.x.x)
 - Strapi v5.x
