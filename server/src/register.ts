@@ -1,6 +1,12 @@
 import type { Core } from '@strapi/strapi';
-import prom from 'prom-client';
+import prom, { Gauge } from 'prom-client';
 import metricsMiddleware from './middlewares/metrics';
+
+const versionMetric = new Gauge({
+  name: 'strapi_version_info',
+  help: 'Strapi version info',
+  labelNames: ['version','major','minor','patch']
+});
 
 const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
   const { config } = strapi.plugin('prometheus');
@@ -47,6 +53,10 @@ const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
   strapi.plugin('prometheus').destroy = async () => {
     server.close();
   };
+
+  const version = require('@strapi/strapi/package.json').version;
+  const [major, minor, patch] = version.split('.')
+  versionMetric.set({version,major,minor,patch}, 1)
 };
 
 export default bootstrap;

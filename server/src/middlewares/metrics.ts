@@ -1,4 +1,3 @@
-import { Core } from "@strapi/strapi";
 import { Counter, exponentialBuckets, Gauge, Histogram } from "prom-client";
 
 const requestDurationSeconds = new Histogram({
@@ -24,14 +23,14 @@ const requestDurationSeconds = new Histogram({
 
 const requestContentLengthBytes = new Histogram({
   name: 'http_request_content_length_bytes',
-  help: 'The size of the payload being sent to the server',
+  help: 'Histogram of the size of payloads sent to the server, measured in bytes.',
   labelNames: ['method', 'path', 'status'],
   buckets: exponentialBuckets(256000, 2, 12) // Buckets starting from 250 KB to 1000 MB
 });
 
 const responseContentLengthBytes = new Histogram({
   name: 'http_response_content_length_bytes',
-  help: 'The size of the payload being sent to the server',
+  help: 'Histogram of the size of payloads sent by the server, measured in bytes.',
   labelNames: ['method', 'path', 'status'],
   buckets: exponentialBuckets(256000, 2, 12) // Buckets starting from 250 KB to 1000 MB
 });
