@@ -8,7 +8,7 @@ export interface Config {
 
 export default {
   default: {
-    collectDefaultMetrics: { prefix: 'strapi_' },
+    collectDefaultMetrics: { prefix: '' },
     labels: [],
     server: {
       port: 9000,
