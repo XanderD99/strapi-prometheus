@@ -42,7 +42,7 @@ module.exports = [
 ## 📊 Metrics
 
 |name|description|type|
-|---|---|---|---|
+|---|---|---|
 |http_request_duration_seconds|Duration of HTTP requests in seconds|Histogram|
 |http_request_content_length_bytes|Histogram of the size of payloads sent to the server, measured in bytes.|Histogram|
 |http_response_content_length_bytes|Histogram of the size of payloads sent by the server, measured in bytes.|Histogram|
