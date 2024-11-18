@@ -31,7 +31,7 @@ module.exports = [
     enabled: true,
     config: {
       // see collectDefaultMetricsOption of prom-client
-      collectDefaultMetrics: false || { prefix: 'strapi_' }
+      collectDefaultMetrics: false || { prefix: '' }
       labels: { name: "strapi-prometheus" },
       server: false || { port: 9000, host: '0.0.0.0', path: '/metrics' }
     }
@@ -41,15 +41,16 @@ module.exports = [
 
 ## 📊 Metrics
 
-|name|description|type|buckets|
-|---|---|---|---|
-|http_request_duration_seconds|Duration of HTTP requests in seconds|Histogram|`exponentialBuckets(.001, 1.5, 12)`. Buckets from 1ms up to 10 seconds|
-|http_request_content_length_bytes|Histogram of the size of payloads sent to the server, measured in bytes.|Histogram|`exponentialBuckets(512000, 2, 10)`. Buckets from 500KB up to ~500MB|
-|http_response_content_length_bytes|Histogram of the size of payloads sent by the server, measured in bytes.|Histogram|`exponentialBuckets(512000, 2, 10)`. Buckets from 500KB up to ~500MB|
-|http_requests_total|Total number of HTTP requests|Counter||
-|http_active_requests|Number of active HTTP requests|Gauge||
-|http_errors_total|Total number of HTTP errors|Counter||
-|strapi_version_info|Strapi version info|Gauge||
+|name|description|type|
+|---|---|---|
+|http_request_duration_seconds|Duration of HTTP requests in seconds|Histogram|
+|http_request_content_length_bytes|Histogram of the size of payloads sent to the server, measured in bytes.|Histogram|
+|http_response_content_length_bytes|Histogram of the size of payloads sent by the server, measured in bytes.|Histogram|
+|http_requests_total|Total number of HTTP requests|Counter|
+|http_active_requests|Number of active HTTP requests|Gauge|
+|http_errors_total|Total number of HTTP errors|Counter|
+|strapi_version_info|Strapi version info|Gauge|
+|lifecycle_duration_seconds|'Tracks the duration of Strapi lifecycle events in seconds|Histogram|
 
 ## 👮‍♀️ Security
 
