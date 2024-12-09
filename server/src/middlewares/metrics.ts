@@ -72,14 +72,20 @@ export default async (ctx, next) => {
 
     httpRequestsTotal.inc({ ...labels, status: ctx.status })
 
-    const requestContentLenght = ctx.request.get('Content-Length') || ctx.request.get('content-length');
-    if (requestContentLenght) {
-      requestContentLengthBytes.observe({ ...labels, status: ctx.status }, parseInt(requestContentLenght));
+    const requestContentLength = ctx.request.get('Content-Length') || ctx.request.get('content-length');
+    if (requestContentLength) {
+      const parsedRequestContentLength = parseInt(requestContentLength, 10);
+      if (!isNaN(parsedRequestContentLength) && isFinite(parsedRequestContentLength)) {
+        requestContentLengthBytes.observe({ ...labels, status: ctx.status }, parsedRequestContentLength);
+      }
     }
-
-    const responseConentLength = ctx.response.get('Content-Length') || ctx.response.get('content-length');
-    if (requestContentLenght) {
-      responseContentLengthBytes.observe({ ...labels, status: ctx.status }, parseInt(responseConentLength));
+    
+    const responseContentLength = ctx.response.get('Content-Length') || ctx.response.get('content-length');
+    if (responseContentLength) {
+      const parsedResponseContentLength = parseInt(responseContentLength, 10);
+      if (!isNaN(parsedResponseContentLength) && isFinite(parsedResponseContentLength)) {
+        responseContentLengthBytes.observe({ ...labels, status: ctx.status }, parsedResponseContentLength);
+      } 
     }
   });
 };
