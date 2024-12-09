@@ -1,7 +1,7 @@
 # Strapi prometheus plugin
 
-![strapi-prometheus-downloads](https://img.shields.io/npm/dt/strapi-prometheus.svg?maxAge=3600)
-![strapi-prometheus-version](https://img.shields.io/npm/v/strapi-prometheus?maxAge=3600)
+[![strapi-prometheus-downloads](https://img.shields.io/npm/dt/strapi-prometheus.svg?maxAge=3600)](https://www.npmjs.com/package/strapi-prometheus)
+[![strapi-prometheus-version](https://img.shields.io/npm/v/strapi-prometheus?maxAge=3600)](https://www.npmjs.com/package/strapi-prometheus)
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/xanderd)
 
@@ -23,20 +23,20 @@ npm i strapi-prometheus
 ### Plugin
 
 ```js
-// config/plugins.js
+// config/plugins.ts
 
 // enable plugin with default configuration.
-module.exports = [
+export default ({ env }) => ({
   prometheus: {
     enabled: true,
     config: {
       // see collectDefaultMetricsOption of prom-client
-      collectDefaultMetrics: false || { prefix: '' }
+      collectDefaultMetrics: false // or { prefix: '' }
       labels: { name: "strapi-prometheus" },
-      server: false || { port: 9000, host: '0.0.0.0', path: '/metrics' }
+      server: false // or { port: 9000, host: '0.0.0.0', path: '/metrics' }
     }
   }
-];
+});
 ```
 
 ## 📊 Metrics
@@ -50,7 +50,7 @@ module.exports = [
 |http_active_requests|Number of active HTTP requests|Gauge|
 |http_errors_total|Total number of HTTP errors|Counter|
 |strapi_version_info|Strapi version info|Gauge|
-|lifecycle_duration_seconds|'Tracks the duration of Strapi lifecycle events in seconds|Histogram|
+|lifecycle_duration_seconds|Tracks the duration of Strapi lifecycle events in seconds|Histogram|
 
 ## 👮‍♀️ Security
 
@@ -59,7 +59,7 @@ module.exports = [
 
 To keep your information secure, the plugin by default starts a new server on port `9000` so that your metrics aren't available to the outside world.
 
-If this is not an option for you. You can disable this by updating the server config and setting it to `false`. This will then create an `/metrics` endpoint on your strapi server. This is secured by the strapi auth middleware so you will need to create a API token to be able to access it. I well mention it again this is not the recommended way, you should try and use the separate server.
+If this is not an option for you. You can disable this by updating the server config and setting it to `false`. This will then create an `/metrics` endpoint on your strapi server. This is secured by the strapi auth middleware so you will need to create a API token to be able to access it. I will mention it again this is not the recommended way, you should try and use the separate server.
 
 ## 🖐 Supported Strapi versions
 
@@ -92,7 +92,7 @@ Here are some usefull dashboards you can start with. If you want to have your da
 
 ## v1 -> v2 migration guide
 
-A lot has changed from v1 to v2 other then strapi v5 support.
+A lot has changed from v1 to v2 other than strapi v5 support.
 
 Firstly check the new configuration options those have been simplified a lot.
 For starters the name has been updated a little bit to `prometheus` instead of `strapi-prometheus`
