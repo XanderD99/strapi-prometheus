@@ -33,7 +33,7 @@ export default ({ env }) => ({
       // see collectDefaultMetricsOption of prom-client
       collectDefaultMetrics: false // or { prefix: '' }
       labels: { name: "strapi-prometheus" },
-      server: false || { port: 9000, host: '0.0.0.0', path: '/metrics' }
+      server: false // or { port: 9000, host: '0.0.0.0', path: '/metrics' }
     }
   }
 });
