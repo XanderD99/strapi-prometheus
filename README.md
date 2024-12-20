@@ -1,10 +1,11 @@
 # Strapi prometheus plugin
 
-[![strapi-prometheus-downloads](https://img.shields.io/npm/dt/strapi-prometheus.svg?maxAge=3600)](https://www.npmjs.com/package/strapi-prometheus)
-[![strapi-prometheus-version](https://img.shields.io/npm/v/strapi-prometheus?maxAge=3600)](https://www.npmjs.com/package/strapi-prometheus)
-[![Socket Badge](https://socket.dev/api/badge/npm/package/strapi-prometheus/2.2.1)](https://socket.dev/npm/package/strapi-prometheus/overview/2.2.1)
+[![License][license-src]][license-href]
+[![npm version][npm-version-src]][npm-version-href]
+[![npm downloads][npm-downloads-src]][npm-downloads-href]
+[![socket.dev][socket-dev-src]][socket-dev-href]
 
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/xanderd)
+[!["Buy Me A Coffee"][coffee-src]][coffee-href]
 
 A simple middleware plugin that adds prometheus metrics to strapi using `prom-client`;
 
@@ -111,3 +112,22 @@ Some metric updates:
 - added `http_requests_total`
 - added `http_errors_total`
 - added `http_active_requests`
+
+<!-- Badges -->
+
+[npm-version-src]: https://img.shields.io/npm/v/strapi-prometheus.svg?style=flat&colorA=18181B&colorB=28CF8D
+[npm-version-href]: https://npmjs.com/package/strapi-prometheus
+
+[npm-downloads-src]: https://img.shields.io/npm/dt/strapi-prometheus.svg?style=flat&colorA=18181B&colorB=28CF8D
+[npm-downloads-href]: https://npmjs.com/package/strapi-prometheus
+
+[license-src]: https://img.shields.io/npm/l/strapi-prometheus.svg?style=flat&colorA=18181B&colorB=28CF8D
+[license-href]: https://npmjs.com/package/strapi-prometheus
+
+[socket-dev-src]: https://socket.dev/api/badge/npm/package/strapi-prometheus/latest
+[socket-dev-href]: https://socket.dev/npm/package/strapi-prometheus/overview
+
+[coffee-src]: https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png
+[coffee-href]: https://www.buymeacoffee.com/xanderd
+
+
