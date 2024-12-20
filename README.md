@@ -2,6 +2,7 @@
 
 [![strapi-prometheus-downloads](https://img.shields.io/npm/dt/strapi-prometheus.svg?maxAge=3600)](https://www.npmjs.com/package/strapi-prometheus)
 [![strapi-prometheus-version](https://img.shields.io/npm/v/strapi-prometheus?maxAge=3600)](https://www.npmjs.com/package/strapi-prometheus)
+[![Socket Badge](https://socket.dev/api/badge/npm/package/strapi-prometheus/2.2.1)](https://socket.dev/npm/package/strapi-prometheus/overview/2.2.1)
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/xanderd)
 
