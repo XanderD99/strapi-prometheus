@@ -19,7 +19,7 @@ A simple middleware plugin that adds prometheus metrics to strapi using `prom-cl
 ## ⏳ Installation
 
 ```bash
-npm i strapi-prometheus
+npm i prom-client strapi-prometheus
 ```
 
 ### Plugin
