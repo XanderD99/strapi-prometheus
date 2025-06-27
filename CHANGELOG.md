@@ -5,7 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.3.0] - 2025-06-27
+
+### Added
+
+- Intelligent route pattern extraction using `_matchedRoute` for low-cardinality metrics
+- Advanced path normalization for consistent metric grouping
+- Support for Strapi API routes, UUIDs, ObjectIds, and file uploads in route patterns
+- Enhanced bucket configurations for better metric granularity
+
+### Changed
+
+- **BREAKING**: Metric label `path` renamed to `route` for consistency
+- Improved route labeling strategy to reduce metric cardinality
+- Updated request duration buckets for better performance monitoring (removed 20s and 30s buckets)
+- Enhanced content length bucket sizing (256KB to 1000MB range)
+- Route pattern extraction now happens after routing middleware for accurate matched routes
+
+### Fixed
+
+- Route pattern extraction timing issue - now correctly uses `_matchedRoute` after routing
+- Consistent label usage across all HTTP metrics
+- Better handling of dynamic route segments (IDs, UUIDs, file names)
 
 ## [2.2.2] - 2025-06-27
 

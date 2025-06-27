@@ -99,17 +99,42 @@ export default {
 
 ## 📊 Available Metrics
 
-The plugin automatically collects the following metrics:
+The plugin automatically collects the following HTTP metrics with intelligent route pattern detection:
 
 | Metric Name | Description | Type | Labels |
 |-------------|-------------|------|--------|
-| `http_request_duration_seconds` | Duration of HTTP requests in seconds | Histogram | `method`, `route`, `status_code` |
-| `http_request_content_length_bytes` | Size of request payloads in bytes | Histogram | `method`, `route` |
-| `http_response_content_length_bytes` | Size of response payloads in bytes | Histogram | `method`, `route`, `status_code` |
-| `http_requests_total` | Total number of HTTP requests | Counter | `method`, `route`, `status_code` |
-| `http_active_requests` | Number of currently active HTTP requests | Gauge | - |
+| `http_request_duration_seconds` | Duration of HTTP requests in seconds | Histogram | `origin`, `method`, `route`, `status` |
+| `http_request_content_length_bytes` | Size of request payloads in bytes | Histogram | `origin`, `method`, `route`, `status` |
+| `http_response_content_length_bytes` | Size of response payloads in bytes | Histogram | `origin`, `method`, `route`, `status` |
 | `strapi_version_info` | Strapi version information | Gauge | `version` |
 | `lifecycle_duration_seconds` | Duration of Strapi lifecycle events | Histogram | `event` |
+
+### 🎯 Smart Route Labeling
+
+The plugin uses intelligent route pattern detection to ensure low cardinality metrics:
+
+**Route Pattern Examples:**
+
+```text
+/api/articles/123        → /api/articles/:id
+/uploads/image.jpg       → /uploads/:file
+/admin/users/uuid-here   → /admin/users/:uuid
+```
+
+**Benefits:**
+
+- ✅ **Low cardinality** - Groups similar requests together
+- ✅ **Consistent aggregation** - Easy to analyze API performance patterns
+- ✅ **Prometheus-friendly** - Prevents metric explosion
+- ✅ **Automatic normalization** - Handles IDs, UUIDs, file names automatically
+
+### 📊 Metric Buckets
+
+**Request Duration Buckets:**
+`1ms, 5ms, 10ms, 50ms, 100ms, 200ms, 500ms, 1s, 2s, 5s, 10s`
+
+**Content Length Buckets:**
+`256KB, 512KB, 1MB, 2MB, 4MB, 8MB, 16MB, 32MB, 64MB, 128MB, 256MB, 512MB, 1GB`
 
 ### Optional System Metrics
 
@@ -304,17 +329,29 @@ Ready-to-use Grafana dashboards for visualizing your Strapi metrics:
 You can create custom dashboards using queries like:
 
 ```promql
-# Average request duration
+# Average request duration by route
 rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])
 
-# Request rate by endpoint  
-sum(rate(http_requests_total[5m])) by (route)
+# Request rate by route pattern
+sum(rate(http_request_duration_seconds_count[5m])) by (route)
 
-# Error rate
-sum(rate(http_requests_total{status_code=~"5.."}[5m])) / sum(rate(http_requests_total[5m]))
+# Request rate by method and status
+sum(rate(http_request_duration_seconds_count[5m])) by (method, status)
 
-# Active requests
-http_active_requests
+# Error rate by route
+sum(rate(http_request_duration_seconds_count{status=~"5.."}[5m])) by (route) / sum(rate(http_request_duration_seconds_count[5m])) by (route)
+
+# Active requests by route
+sum(http_active_requests) by (route)
+
+# Top slowest API endpoints
+topk(10, histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) by (route))
+
+# Request throughput by origin
+sum(rate(http_request_duration_seconds_count[5m])) by (origin)
+
+# Response size distribution
+histogram_quantile(0.95, rate(http_response_content_length_bytes_bucket[5m])) by (route)
 
 # Memory usage (when collectDefaultMetrics is enabled)
 nodejs_heap_size_used_bytes / nodejs_heap_size_total_bytes
@@ -411,16 +448,26 @@ module.exports = {
 - **Enhanced metrics** - More comprehensive monitoring
 - **Improved performance** - Optimized for production use
 
-### 📊 Metric Changes
+### 📊 Metric and Label Changes
 
 | v1 Metric | v2 Metric | Change |
 |-----------|-----------|---------|
 | `http_request_duration_s` | `http_request_duration_seconds` | ✅ Renamed for clarity |
 | `http_request_size_bytes` | `http_request_content_length_bytes` | ✅ Renamed for accuracy |
 | `http_response_size_bytes` | `http_response_content_length_bytes` | ✅ Renamed for accuracy |
+| Labels: `path` | Labels: `route` | ✅ More consistent route patterns |
 | Apollo metrics | ❌ | 🗑️ Removed - use [apollo-prometheus-exporter](https://github.com/bfmatei/apollo-prometheus-exporter) |
 | - | `http_requests_total` | ✅ New counter metric |
 | - | `http_active_requests` | ✅ New gauge metric |
+
+### 🏷️ Enhanced Label Strategy
+
+**v2 Improvements:**
+
+- **Smart route detection** - Uses `_matchedRoute` when available for accurate patterns
+- **Consistent normalization** - `/api/articles/123` → `/api/articles/:id`
+- **Low cardinality** - Prevents metric explosion from dynamic paths
+- **Added `origin` label** - Track requests by source
 
 ### 🔄 Migration Steps
 
