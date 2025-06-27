@@ -1,38 +1,81 @@
 ---
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
+name: 🐛 Bug Report
+about: Report a bug to help us improve the Strapi Prometheus plugin
+title: '[BUG] '
+labels: 'bug'
+assignees: 'XanderD99'
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## 🐛 Bug Description
+<!-- A clear and concise description of what the bug is -->
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+## 🔄 Steps to Reproduce
+<!-- Steps to reproduce the behavior -->
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+1. Step one
+2. Step two  
+3. Step three
+4. Step four 
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+## ✅ Expected Behavior
+<!-- A clear and concise description of what you expected to happen -->
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+## ❌ Actual Behavior
+<!-- A clear and concise description of what actually happened -->
 
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
+## 📱 Environment Information
+<!-- Please complete the following information -->
 
-**Additional context**
-Add any other context about the problem here.
+**Strapi Information:**
+
+- Strapi Version: [e.g. 5.0.0]
+- Plugin Version: [e.g. 2.2.2]
+- Installation Method: [e.g. npm, yarn, pnpm]
+
+**System Information:**
+
+- OS: [e.g. macOS 13.0, Ubuntu 22.04, Windows 11]
+- Node.js Version: [e.g. 18.17.0]
+- Package Manager: [e.g. npm 9.0.0, yarn 3.6.0]
+
+**Prometheus Setup:**
+
+- Prometheus Version: [e.g. 2.45.0]
+- Metrics Server: [e.g. dedicated server on port 9000, main Strapi server]
+- Default Metrics Enabled: [e.g. yes/no]
+
+## 📊 Configuration
+<!-- Share your plugin configuration (remove sensitive data) -->
+```js
+// config/plugins.js or config/plugins.ts
+prometheus: {
+  enabled: true,
+  config: {
+    // Your configuration here
+  }
+}
+```
+
+## 📋 Logs/Error Messages
+<!-- If applicable, add error messages or relevant log outputs -->
+
+```text
+Paste error messages or logs here
+```
+
+## 📸 Screenshots
+<!-- If applicable, add screenshots to help explain your problem -->
+
+## 🔍 Additional Context
+<!-- Add any other context about the problem here -->
+- Are you using any other Strapi plugins that might conflict?
+- Have you tried with a fresh Strapi installation?
+- Any custom middleware or modifications?
+
+## ✅ Checklist
+<!-- Please check the boxes that apply -->
+- [ ] I have searched existing issues to ensure this is not a duplicate
+- [ ] I have provided all the requested information above
+- [ ] I have tested this with the latest version of the plugin
+- [ ] I have checked the [troubleshooting guide](https://github.com/XanderD99/strapi-prometheus#-troubleshooting) in the README
