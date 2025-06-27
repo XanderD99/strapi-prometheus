@@ -3,7 +3,7 @@ import { Counter, exponentialBuckets, Gauge, Histogram } from "prom-client";
 const requestDurationSeconds = new Histogram({
   name: 'http_request_duration_seconds',
   help: 'Duration of HTTP requests in seconds',
-  labelNames: ['method', 'path', 'status'],
+  labelNames: ['origin', 'method', 'path', 'status'],
   buckets: [
     0.001, // 1 ms
     0.005, // 5 ms
@@ -24,37 +24,35 @@ const requestDurationSeconds = new Histogram({
 const requestContentLengthBytes = new Histogram({
   name: 'http_request_content_length_bytes',
   help: 'Histogram of the size of payloads sent to the server, measured in bytes.',
-  labelNames: ['method', 'path', 'status'],
+  labelNames: ['origin', 'method', 'path', 'status'],
   buckets: exponentialBuckets(256000, 2, 12) // Buckets starting from 250 KB to 1000 MB
 });
 
 const responseContentLengthBytes = new Histogram({
   name: 'http_response_content_length_bytes',
   help: 'Histogram of the size of payloads sent by the server, measured in bytes.',
-  labelNames: ['method', 'path', 'status'],
+  labelNames: ['origin', 'method', 'path', 'status'],
   buckets: exponentialBuckets(256000, 2, 12) // Buckets starting from 250 KB to 1000 MB
 });
 
 const httpRequestsTotal = new Counter({
   name: 'http_requests_total',
   help: 'Total number of HTTP requests',
-  labelNames: ['method', 'path', 'status'],
+  labelNames: ['origin', 'method', 'path', 'status'],
 });
 
 const httpActiveRequests = new Gauge({
   name: 'http_active_requests',
   help: 'Number of active HTTP requests',
-  labelNames: ['method', 'path'],
-});
-
-const httpErrorsTotal = new Counter({
-  name: 'http_errors_total',
-  help: 'Total number of HTTP errors',
-  labelNames: ['method', 'path', 'status'],
+  labelNames: ['origin', 'method', 'path'],
 });
 
 export default async (ctx, next) => {
-  const labels = { path: ctx.path, method: ctx.method }
+  const labels = {
+    path: ctx._matchedRoute || ctx.path,
+    method: ctx.method,
+    origin: ctx.origin
+  }
 
   httpActiveRequests.inc(labels)
   const end = requestDurationSeconds.startTimer(labels);
@@ -65,10 +63,6 @@ export default async (ctx, next) => {
     end({ ...labels, status: ctx.status });
 
     httpActiveRequests.dec(labels)
-
-    if (ctx.status >= 400) {
-      httpErrorsTotal.inc({ ...labels, status: ctx.status });
-    }
 
     httpRequestsTotal.inc({ ...labels, status: ctx.status })
 
