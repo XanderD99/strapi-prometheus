@@ -1,133 +1,494 @@
-# Strapi prometheus plugin
+# 📊 Strapi Prometheus Plugin
 
-[![License][license-src]][license-href]
-[![npm version][npm-version-src]][npm-version-href]
-[![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![socket.dev][socket-dev-src]][socket-dev-href]
+[![npm downloads](https://img.shields.io/npm/dt/strapi-prometheus.svg?maxAge=3600)](https://www.npmjs.com/package/strapi-prometheus)
+[![npm version](https://img.shields.io/npm/v/strapi-prometheus?maxAge=3600)](https://www.npmjs.com/package/strapi-prometheus)
+[![license](https://img.shields.io/npm/l/strapi-prometheus)](https://github.com/XanderD99/strapi-prometheus/blob/main/LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/XanderD99/strapi-prometheus)](https://github.com/XanderD99/strapi-prometheus)
 
-[!["Buy Me A Coffee"][coffee-src]][coffee-href]
-
-A simple middleware plugin that adds prometheus metrics to strapi using `prom-client`;
+A powerful middleware plugin that adds comprehensive Prometheus metrics to your Strapi application using `prom-client`. Monitor your API performance, track system resources, and gain valuable insights into your application's behavior.
 
 ## ✨ Features
 
-- Collect API metrics for each call
-- Process Metrics as recommended by [Prometheus](https://prometheus.io/docs/instrumenting/writing_clientlibs/#standard-and-runtime-collectors)
-- Endpoint to retrieve the metrics - used for Prometheus scraping
-- Set custom labels
+- 🚀 **Real-time API Metrics** - Track HTTP request duration, payload sizes, and response codes
+- 📈 **System Monitoring** - Collect Node.js process metrics as recommended by [Prometheus](https://prometheus.io/docs/instrumenting/writing_clientlibs/#standard-and-runtime-collectors)
+- 🔒 **Secure by Default** - Dedicated metrics server (port 9000) isolated from your main application
+- 🏷️ **Custom Labels** - Add custom labels to categorize and filter your metrics
+- 📊 **Lifecycle Tracking** - Monitor Strapi lifecycle events duration
+- 🔌 **Easy Integration** - Simple configuration with sensible defaults
+- 🆔 **Version Tracking** - Monitor Strapi version information
 
 ## ⏳ Installation
 
+### 1. Install the package
+
 ```bash
-npm i prom-client strapi-prometheus
+npm install strapi-prometheus
+# or
+yarn add strapi-prometheus
+# or
+pnpm add strapi-prometheus
 ```
 
-### Plugin
+### 2. Install peer dependencies
+
+```bash
+npm install prom-client
+# or
+yarn add prom-client
+# or
+pnpm add prom-client
+```
+
+### 3. Configure the plugin
+
+Create or update your `config/plugins.js` (or `config/plugins.ts` for TypeScript):
 
 ```js
-// config/plugins.ts
-
-// enable plugin with default configuration.
-export default ({ env }) => ({
+// config/plugins.js
+module.exports = {
+  // ...other plugins
   prometheus: {
     enabled: true,
     config: {
-      // see collectDefaultMetricsOption of prom-client
-      collectDefaultMetrics: false // or { prefix: '' }
-      labels: { name: "strapi-prometheus" },
-      server: false // or { port: 9000, host: '0.0.0.0', path: '/metrics' }
+      // Optional: Collect Node.js default metrics
+      // See collectDefaultMetricsOption of prom-client for all options
+      collectDefaultMetrics: false, // or { prefix: 'my_app_' }
+      
+      // Optional: Add custom labels to all metrics
+      labels: { 
+        app: "my-strapi-app",
+        environment: "production"
+      },
+      
+      // Server configuration
+      // Set to false to expose metrics on your main Strapi server (not recommended)
+      server: {
+        port: 9000,           // Metrics server port
+        host: '0.0.0.0',      // Metrics server host
+        path: '/metrics'      // Metrics endpoint path
+      }
+      // OR disable separate server (use with caution):
+      // server: false
     }
   }
-});
+};
 ```
 
-## 📊 Metrics
+For TypeScript projects:
 
-|name|description|type|
-|---|---|---|
-|http_request_duration_seconds|Duration of HTTP requests in seconds|Histogram|
-|http_request_content_length_bytes|Histogram of the size of payloads sent to the server, measured in bytes.|Histogram|
-|http_response_content_length_bytes|Histogram of the size of payloads sent by the server, measured in bytes.|Histogram|
-|http_requests_total|Total number of HTTP requests|Counter|
-|http_active_requests|Number of active HTTP requests|Gauge|
-|http_errors_total|Total number of HTTP errors|Counter|
-|strapi_version_info|Strapi version info|Gauge|
-|lifecycle_duration_seconds|Tracks the duration of Strapi lifecycle events in seconds|Histogram|
+```ts
+// config/plugins.ts
+export default {
+  prometheus: {
+    enabled: true,
+    config: {
+      collectDefaultMetrics: false,
+      labels: { 
+        app: "my-strapi-app",
+        environment: process.env.NODE_ENV || "development"
+      },
+      server: {
+        port: parseInt(process.env.METRICS_PORT || '9000'),
+        host: process.env.METRICS_HOST || '0.0.0.0',
+        path: '/metrics'
+      }
+    }
+  }
+};
+```
 
-## 👮‍♀️ Security
+## 📊 Available Metrics
+
+The plugin automatically collects the following metrics:
+
+| Metric Name | Description | Type | Labels |
+|-------------|-------------|------|--------|
+| `http_request_duration_seconds` | Duration of HTTP requests in seconds | Histogram | `method`, `route`, `status_code` |
+| `http_request_content_length_bytes` | Size of request payloads in bytes | Histogram | `method`, `route` |
+| `http_response_content_length_bytes` | Size of response payloads in bytes | Histogram | `method`, `route`, `status_code` |
+| `http_requests_total` | Total number of HTTP requests | Counter | `method`, `route`, `status_code` |
+| `http_active_requests` | Number of currently active HTTP requests | Gauge | - |
+| `strapi_version_info` | Strapi version information | Gauge | `version` |
+| `lifecycle_duration_seconds` | Duration of Strapi lifecycle events | Histogram | `event` |
+
+### Optional System Metrics
+
+When `collectDefaultMetrics` is enabled, you'll also get Node.js process metrics:
+
+- `process_cpu_user_seconds_total` - CPU time spent in user mode
+- `process_cpu_system_seconds_total` - CPU time spent in system mode  
+- `process_start_time_seconds` - Process start time
+- `process_resident_memory_bytes` - Resident memory size
+- `nodejs_heap_size_total_bytes` - Total heap size
+- `nodejs_heap_size_used_bytes` - Used heap size
+- `nodejs_external_memory_bytes` - External memory usage
+- And more...
+
+## � Configuration Options
+
+### `collectDefaultMetrics`
+
+Controls collection of Node.js process metrics:
+
+```js
+// Disable default metrics (default)
+collectDefaultMetrics: false
+
+// Enable with default settings
+collectDefaultMetrics: true
+
+// Enable with custom prefix
+collectDefaultMetrics: { 
+  prefix: 'my_app_',
+  register: undefined, // Uses default registry
+  gcDurationBuckets: [0.001, 0.01, 0.1, 1, 2, 5], // Custom GC buckets
+  eventLoopMonitoringPrecision: 10 // Event loop precision
+}
+```
+
+### `labels`
+
+Global labels added to all metrics:
+
+```js
+labels: {
+  app: 'my-app',
+  environment: 'production',
+  version: '1.0.0',
+  datacenter: 'us-east-1'
+}
+```
+
+### `server`
+
+Metrics server configuration:
+
+```js
+// Dedicated server (recommended)
+server: {
+  port: 9000,
+  host: '0.0.0.0',
+  path: '/metrics'
+}
+
+// Disable dedicated server (adds /metrics to main Strapi server)
+server: false
+```
+
+## 🚀 Quick Start
+
+1. Install and configure the plugin (see [Installation](#-installation))
+2. Start your Strapi application
+3. Metrics will be available at `http://localhost:9000/metrics`
+4. Configure Prometheus to scrape this endpoint
+
+## 📊 Accessing Metrics
+
+### Dedicated Server (Default & Recommended)
+
+By default, metrics are served on a separate server:
+
+```bash
+curl http://localhost:9000/metrics
+```
+
+### Main Strapi Server (Not Recommended)
+
+If you set `server: false`, metrics will be available on your main Strapi server:
+
+```bash
+# Requires authentication token
+curl -H "Authorization: Bearer YOUR_API_TOKEN" http://localhost:1337/metrics
+```
+
+## 👮‍♀️ Security Considerations
 
 > [!CAUTION]
-> Use at own risk. Metric data can sometimes hold sensitive data that should not be publically available.
+> Metrics can contain sensitive information about your application's usage patterns, performance characteristics, and potentially user behavior. Always secure your metrics endpoint appropriately.
 
-To keep your information secure, the plugin by default starts a new server on port `9000` so that your metrics aren't available to the outside world.
+### Recommended: Dedicated Server (Default)
 
-If this is not an option for you. You can disable this by updating the server config and setting it to `false`. This will then create an `/metrics` endpoint on your strapi server. This is secured by the strapi auth middleware so you will need to create a API token to be able to access it. I will mention it again this is not the recommended way, you should try and use the separate server.
+The plugin starts a separate server on port 9000 by default, isolated from your main application:
 
-## 🖐 Supported Strapi versions
+- ✅ **Secure by design** - No external access to your main application
+- ✅ **Simple firewall rules** - Block port 9000 from external access
+- ✅ **Performance** - No impact on your main application
+- ✅ **Monitoring-specific** - Dedicated to metrics collection
 
-- Strapi v4.x (strapi-prometheus v1.x.x)
-- Strapi v5.x
+### Alternative: Main Server Integration
 
-## 📊 Prometheus example
+You can expose metrics on your main Strapi server by setting `server: false`:
 
-`⚠️ You need to create your own prometheus instance for this. This plugin does not do that for you!`
+- ⚠️ **Authentication required** - Protected by Strapi's auth middleware
+- ⚠️ **API token needed** - Must create and manage API tokens
+- ⚠️ **Potential exposure** - Metrics endpoint on your main application
+- ⚠️ **Performance impact** - Additional load on main server
 
-here is a basic example of prometheus config. In this example we assume that the metrics endpoint is not secured.
+**We strongly recommend using the dedicated server approach.**
+
+## 🖐 Compatibility
+
+| Strapi Version | Plugin Version | Status |
+|---------------|----------------|---------|
+| v5.x | v2.x.x | ✅ Fully Supported |
+| v4.x | v1.x.x | ✅ Legacy Support |
+
+> **Note**: For new projects, we recommend using Strapi v5.x with the latest plugin version.
+
+## 📊 Prometheus Configuration Example
+
+> [!NOTE]
+> This plugin only exposes metrics - you need to set up your own Prometheus instance to collect them.
+
+Here's a basic Prometheus configuration to scrape metrics from the dedicated server:
 
 ```yml
-# prometheus.yaml
-
+# prometheus.yml
 global:
-  scrape_interval: 10s
+  scrape_interval: 15s     # How frequently to scrape targets
+  evaluation_interval: 15s # How frequently to evaluate rules
+
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
 scrape_configs:
-  - job_name: "strapi"
-    metrics_path: "/metrics"
+  - job_name: "strapi-app"
     static_configs:
-      - targets: ["localhost:9000"]
+      - targets: ["localhost:9000"]  # Metrics server endpoint
+    scrape_interval: 10s             # Override global interval
+    metrics_path: /metrics           # Metrics endpoint path
+    
+    # Optional: Add additional labels to all metrics from this job
+    relabel_configs:
+      - target_label: 'app'
+        replacement: 'my-strapi-app'
 ```
 
-## 📊 Grafana dashboards
+### Docker Compose Example
 
-Here are some usefull dashboards you can start with. If you want to have your dashboard added feel free to open a PR.
+If you're running Strapi in Docker, here's a complete example:
 
-- [14565](https://grafana.com/grafana/dashboards/14565)
+```yml
+version: '3.8'
+services:
+  strapi:
+    image: my-strapi-app
+    ports:
+      - "1337:1337"  # Strapi app
+      - "9000:9000"  # Metrics (expose only to monitoring network)
+    
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+```
 
-## v1 -> v2 migration guide
+## 📊 Grafana Dashboards
 
-A lot has changed from v1 to v2 other than strapi v5 support.
+Ready-to-use Grafana dashboards for visualizing your Strapi metrics:
 
-Firstly check the new configuration options those have been simplified a lot.
-For starters the name has been updated a little bit to `prometheus` instead of `strapi-prometheus`
-From v2 forwards a separate server that runs disconnected from strapi is the default behaviour. This can be disabled by passing `server: false` to the config.
+### Official Dashboards
 
-Setting a custom registry has also been removed in favor of using the default register provided by the `prom-client` package. This allows us to create any metric at any place in our apps, instead of having to register it using this plugin. This gives you all the freedom of what to do with your custom metrics.
+- **[Dashboard 14565](https://grafana.com/grafana/dashboards/14565)** - Comprehensive Strapi monitoring dashboard
 
-People using the apollo plugin will need to look into finding a new plugin to add to their apolloServer config. I recommend [this one](https://github.com/bfmatei/apollo-prometheus-exporter) as it was used as inspiration.
+### Custom Dashboard Examples
 
-Some metric updates:
+You can create custom dashboards using queries like:
 
-- apollo metrics have been deleted
-- `http_request_duration_s` renamed to `http_request_duration_seconds`
-- `http_{response/request}_size_bytes` renamed to `http_{response/request}_content_length_bytes`
-- added `http_requests_total`
-- added `http_errors_total`
-- added `http_active_requests`
+```promql
+# Average request duration
+rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])
 
-<!-- Badges -->
+# Request rate by endpoint  
+sum(rate(http_requests_total[5m])) by (route)
 
-[npm-version-src]: https://img.shields.io/npm/v/strapi-prometheus.svg?style=flat&colorA=18181B&colorB=28CF8D
-[npm-version-href]: https://npmjs.com/package/strapi-prometheus
+# Error rate
+sum(rate(http_requests_total{status_code=~"5.."}[5m])) / sum(rate(http_requests_total[5m]))
 
-[npm-downloads-src]: https://img.shields.io/npm/dt/strapi-prometheus.svg?style=flat&colorA=18181B&colorB=28CF8D
-[npm-downloads-href]: https://npmjs.com/package/strapi-prometheus
+# Active requests
+http_active_requests
 
-[license-src]: https://img.shields.io/npm/l/strapi-prometheus.svg?style=flat&colorA=18181B&colorB=28CF8D
-[license-href]: https://npmjs.com/package/strapi-prometheus
+# Memory usage (when collectDefaultMetrics is enabled)
+nodejs_heap_size_used_bytes / nodejs_heap_size_total_bytes
+```
 
-[socket-dev-src]: https://socket.dev/api/badge/npm/package/strapi-prometheus/latest
-[socket-dev-href]: https://socket.dev/npm/package/strapi-prometheus/overview
+### Contributing Dashboards
 
-[coffee-src]: https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png
-[coffee-href]: https://www.buymeacoffee.com/xanderd
+Have a great dashboard? We'd love to feature it! Please [open a pull request](https://github.com/XanderD99/strapi-prometheus) with your dashboard JSON.
 
+## 🔍 Troubleshooting
 
+### Common Issues
+
+#### Metrics server not starting
+
+- Check if port 9000 is already in use
+- Verify firewall settings
+- Check Strapi logs for error messages
+
+#### No metrics appearing
+
+- Ensure the plugin is properly enabled in `config/plugins.js`
+- Verify that `prom-client` is installed
+- Check that requests are being made to your Strapi application
+
+#### Memory usage increasing
+
+- Consider disabling `collectDefaultMetrics` if not needed
+- Review custom labels - avoid high-cardinality labels
+- Monitor Prometheus scrape interval
+
+### Debug Mode
+
+Enable debug logging to troubleshoot issues:
+
+```js
+// config/plugins.js
+module.exports = {
+  prometheus: {
+    enabled: true,
+    config: {
+      // ... your config
+    }
+  }
+};
+```
+
+### Getting Help
+
+- 🐛 [Report bugs](https://github.com/XanderD99/strapi-prometheus/issues)
+- 💡 [Request features](https://github.com/XanderD99/strapi-prometheus/issues)
+- 📖 [Read the documentation](https://github.com/XanderD99/strapi-prometheus)
+- ☕ [Buy me a coffee](https://www.buymeacoffee.com/xanderd)
+
+## 🏗️ v1 → v2 Migration Guide
+
+## 🏗️ Migration Guide (v1 → v2)
+
+Version 2.0 brings significant improvements and Strapi v5 support. Here's what you need to know:
+
+### 🔧 Configuration Changes
+
+**Old (v1):**
+
+```js
+module.exports = {
+  'strapi-prometheus': {
+    enabled: true,
+    config: {
+      // v1 config
+    }
+  }
+};
+```
+
+**New (v2):**
+
+```js
+module.exports = {
+  prometheus: {  // ← Plugin name simplified
+    enabled: true,
+    config: {
+      // v2 config (see configuration section above)
+    }
+  }
+};
+```
+
+### 🚀 New Features in v2
+
+- **Dedicated metrics server** - Default behavior for better security
+- **Simplified configuration** - Easier setup and maintenance  
+- **Strapi v5 support** - Future-ready compatibility
+- **Enhanced metrics** - More comprehensive monitoring
+- **Improved performance** - Optimized for production use
+
+### 📊 Metric Changes
+
+| v1 Metric | v2 Metric | Change |
+|-----------|-----------|---------|
+| `http_request_duration_s` | `http_request_duration_seconds` | ✅ Renamed for clarity |
+| `http_request_size_bytes` | `http_request_content_length_bytes` | ✅ Renamed for accuracy |
+| `http_response_size_bytes` | `http_response_content_length_bytes` | ✅ Renamed for accuracy |
+| Apollo metrics | ❌ | 🗑️ Removed - use [apollo-prometheus-exporter](https://github.com/bfmatei/apollo-prometheus-exporter) |
+| - | `http_requests_total` | ✅ New counter metric |
+| - | `http_active_requests` | ✅ New gauge metric |
+
+### 🔄 Migration Steps
+
+1. **Update plugin name** in your configuration
+2. **Review new configuration options** (especially `server` settings)
+3. **Update Prometheus scrape config** if using custom settings
+4. **Update Grafana dashboards** with new metric names
+5. **Test thoroughly** in development before production deployment
+
+### ⚠️ Breaking Changes
+
+- **Apollo metrics removed** - If you were using Apollo GraphQL metrics, you'll need to implement them separately
+- **Custom registry removed** - Now uses the default `prom-client` registry (this actually gives you more flexibility!)
+- **Configuration structure changed** - Follow the new configuration format
+
+### 💡 Recommendations
+
+- Start with default settings and customize as needed
+- Use the dedicated metrics server (default behavior)
+- Monitor your Prometheus targets after migration
+- Consider this a good time to review your monitoring setup
+
+## 🤝 Contributing
+
+We welcome contributions! Here's how you can help:
+
+### 🐛 Reporting Issues
+
+- Use the [issue tracker](https://github.com/XanderD99/strapi-prometheus/issues)
+- Search existing issues before creating new ones
+- Provide clear reproduction steps
+- Include environment details (Strapi version, Node.js version, OS)
+
+### 💻 Development
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes
+4. Add tests if applicable
+5. Commit with clear messages: `git commit -m 'Add amazing feature'`
+6. Push to your branch: `git push origin feature/amazing-feature`
+7. Open a Pull Request
+
+### 📝 Documentation
+
+- Improve README documentation
+- Add code examples
+- Create tutorials or blog posts
+- Share Grafana dashboards
+
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE) - see the LICENSE file for details.
+
+## 👨‍💻 Author & Maintainer
+
+**Xander Denecker** ([@XanderD99](https://github.com/XanderD99))
+
+- 🐙 GitHub: [XanderD99](https://github.com/XanderD99)
+- ☕ Buy me a coffee: [buymeacoffee.com/xanderd](https://www.buymeacoffee.com/xanderd)
+
+## 🙏 Acknowledgments
+
+- [Prometheus](https://prometheus.io/) - The monitoring system that makes this all possible
+- [prom-client](https://github.com/siimon/prom-client) - The Node.js Prometheus client library
+- [Strapi](https://strapi.io/) - The leading open-source headless CMS
+- All [contributors](https://github.com/XanderD99/strapi-prometheus/contributors) who have helped improve this plugin
+
+---
+
+**⭐ If this plugin helps you, please consider giving it a star on [GitHub](https://github.com/XanderD99/strapi-prometheus)!**
