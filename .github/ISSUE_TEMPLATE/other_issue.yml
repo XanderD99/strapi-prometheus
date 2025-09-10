@@ -1,0 +1,70 @@
+name: 🔧 Other Issue
+description: For issues that don't fit other categories
+title: ''
+labels: []
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for issues that don't fit into the bug report or feature request categories.
+
+  - type: textarea
+    id: issue-description
+    attributes:
+      label: 📝 Issue Description
+      description: Describe your issue clearly and concisely
+      placeholder: What's your question or issue?
+    validations:
+      required: true
+
+  - type: input
+    id: strapi-version
+    attributes:
+      label: Strapi Version
+      description: What version of Strapi are you using?
+      placeholder: "e.g. 5.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: Plugin Version
+      description: What version of the Strapi Prometheus plugin are you using?
+      placeholder: "e.g. 2.2.2"
+    validations:
+      required: true
+
+  - type: input
+    id: operating-system
+    attributes:
+      label: Operating System
+      description: What operating system are you using?
+      placeholder: "e.g. macOS 13.0, Ubuntu 22.04, Windows 11"
+
+  - type: input
+    id: nodejs-version
+    attributes:
+      label: Node.js Version
+      description: What version of Node.js are you using?
+      placeholder: "e.g. 18.17.0"
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 🔍 Additional Context
+      description: Add any other context, screenshots, or information here
+      placeholder: Any additional information that might be helpful?
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: ✅ Checklist
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have checked the documentation and troubleshooting guide
+          required: true
+        - label: This issue doesn't fit any of the other issue template categories
+          required: true

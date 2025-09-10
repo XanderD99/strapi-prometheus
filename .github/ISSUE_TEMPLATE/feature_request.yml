@@ -1,0 +1,102 @@
+name: ✨ Feature Request
+description: Suggest a new feature or enhancement for the Strapi Prometheus plugin
+title: '[FEATURE] '
+labels: ['enhancement']
+assignees:
+  - XanderD99
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a new feature! Please provide as much detail as possible to help us understand your request.
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: 💡 Feature Description
+      description: A clear and concise description of the feature you'd like to see
+      placeholder: Describe the feature you want...
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem-use-case
+    attributes:
+      label: 🎯 Problem/Use Case
+      description: Is your feature request related to a problem? Please describe the use case
+      placeholder: "Example: I need to monitor custom business metrics alongside HTTP metrics"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: 🛠️ Proposed Solution
+      description: Describe the solution you'd like to see implemented
+      placeholder: How do you think this should work?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternative-solutions
+    attributes:
+      label: 🔄 Alternative Solutions
+      description: Describe any alternative solutions or features you've considered
+      placeholder: What other approaches have you considered?
+
+  - type: checkboxes
+    id: impact-existing-features
+    attributes:
+      label: 📊 Impact on Existing Features
+      description: How would this feature affect existing functionality?
+      options:
+        - label: This is a breaking change
+        - label: This is backward compatible
+        - label: This requires configuration changes
+        - label: This affects performance
+
+  - type: textarea
+    id: implementation-ideas
+    attributes:
+      label: 🎨 Implementation Ideas
+      description: If you have ideas about how this could be implemented, share them here
+      placeholder: Any technical implementation suggestions?
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: 📋 Acceptance Criteria
+      description: What would need to be true for this feature to be considered complete?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: 🌟 Additional Context
+      description: Add any other context, screenshots, mockups, or examples about the feature request here
+      placeholder: Any additional information, mockups, or examples?
+
+  - type: textarea
+    id: related-issues
+    attributes:
+      label: 🔗 Related Issues/PRs
+      description: Link any related issues or pull requests
+      placeholder: "e.g. #123, #456"
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: ✅ Checklist
+      description: Please check the boxes that apply
+      options:
+        - label: I have searched existing issues to ensure this is not a duplicate
+          required: true
+        - label: I have provided a clear description of the feature
+          required: true
+        - label: I have considered the impact on existing users
+          required: true
+        - label: I am willing to help implement this feature (optional)
+          required: false
