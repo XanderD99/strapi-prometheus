@@ -1,11 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 💬 Discussions
-    url: https://github.com/XanderD99/strapi-prometheus/discussions
-    about: Ask questions, share ideas, or discuss the plugin with the community
-  - name: 📖 Documentation
-    url: https://github.com/XanderD99/strapi-prometheus#readme
-    about: Read the comprehensive documentation and setup guides
   - name: ☕ Support the Project
     url: https://www.buymeacoffee.com/xanderd
     about: Buy the maintainer a coffee to support continued development
