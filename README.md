@@ -5,21 +5,23 @@
 [![license](https://img.shields.io/npm/l/strapi-prometheus)](https://github.com/XanderD99/strapi-prometheus/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/XanderD99/strapi-prometheus)](https://github.com/XanderD99/strapi-prometheus)
 
-A powerful middleware plugin that adds comprehensive Prometheus metrics to your Strapi application using `prom-client`. Monitor your API performance, track system resources, and gain valuable insights into your application's behavior.
+A powerful middleware plugin that adds comprehensive Prometheus metrics to your Strapi application using `prom-client` 📈. Monitor your API performance, track system resources, and gain valuable insights into your application's behavior with just a few lines of configuration! 🚀
 
 ## ✨ Features
 
-- 🚀 **Real-time API Metrics** - Track HTTP request duration, payload sizes, and response codes
+- 🚀 **Real-time API Metrics** - Track HTTP request duration, payload sizes, and response codes with intelligent route normalization
 - 📈 **System Monitoring** - Collect Node.js process metrics as recommended by [Prometheus](https://prometheus.io/docs/instrumenting/writing_clientlibs/#standard-and-runtime-collectors)
 - 🔒 **Secure by Default** - Dedicated metrics server (port 9000) isolated from your main application
-- 🏷️ **Custom Labels** - Add custom labels to categorize and filter your metrics
-- 📊 **Lifecycle Tracking** - Monitor Strapi lifecycle events duration
-- 🔌 **Easy Integration** - Simple configuration with sensible defaults
-- 🆔 **Version Tracking** - Monitor Strapi version information
+- 🏷️ **Custom Labels** - Add custom labels to categorize and filter your metrics across environments 🌍
+- 📊 **Database Lifecycle Tracking** - Monitor Strapi lifecycle events (create, update, delete) duration ⚡
+- 🔌 **Easy Integration** - Simple configuration with sensible defaults - get started in minutes!
+- 🆔 **Version Tracking** - Monitor Strapi version information for deployment tracking
+- 🎯 **Smart Path Normalization** - Automatically converts `/api/users/123` to `/api/users/:id` for better metric cardinality
+- 📦 **TypeScript Support** - Built with TypeScript for better developer experience
 
-## ⏳ Installation
+## ⚡ Installation
 
-### 1. Install the package
+### 1. Install the package 📦
 
 ```bash
 npm install strapi-prometheus
@@ -29,7 +31,7 @@ yarn add strapi-prometheus
 pnpm add strapi-prometheus
 ```
 
-### 2. Install peer dependencies
+### 2. Install peer dependencies 🔧
 
 ```bash
 npm install prom-client
@@ -39,7 +41,7 @@ yarn add prom-client
 pnpm add prom-client
 ```
 
-### 3. Configure the plugin
+### 3. Configure the plugin ⚙️
 
 Create or update your `config/plugins.js` (or `config/plugins.ts` for TypeScript):
 
@@ -99,42 +101,15 @@ export default {
 
 ## 📊 Available Metrics
 
-The plugin automatically collects the following HTTP metrics with intelligent route pattern detection:
+The plugin automatically collects the following metrics with intelligent route pattern detection ✨:
 
 | Metric Name | Description | Type | Labels |
 |-------------|-------------|------|--------|
-| `http_request_duration_seconds` | Duration of HTTP requests in seconds | Histogram | `origin`, `method`, `route`, `status` |
-| `http_request_content_length_bytes` | Size of request payloads in bytes | Histogram | `origin`, `method`, `route`, `status` |
-| `http_response_content_length_bytes` | Size of response payloads in bytes | Histogram | `origin`, `method`, `route`, `status` |
-| `strapi_version_info` | Strapi version information | Gauge | `version` |
-| `lifecycle_duration_seconds` | Duration of Strapi lifecycle events | Histogram | `event` |
-
-### 🎯 Smart Route Labeling
-
-The plugin uses intelligent route pattern detection to ensure low cardinality metrics:
-
-**Route Pattern Examples:**
-
-```text
-/api/articles/123        → /api/articles/:id
-/uploads/image.jpg       → /uploads/:file
-/admin/users/uuid-here   → /admin/users/:uuid
-```
-
-**Benefits:**
-
-- ✅ **Low cardinality** - Groups similar requests together
-- ✅ **Consistent aggregation** - Easy to analyze API performance patterns
-- ✅ **Prometheus-friendly** - Prevents metric explosion
-- ✅ **Automatic normalization** - Handles IDs, UUIDs, file names automatically
-
-### 📊 Metric Buckets
-
-**Request Duration Buckets:**
-`1ms, 5ms, 10ms, 50ms, 100ms, 200ms, 500ms, 1s, 2s, 5s, 10s`
-
-**Content Length Buckets:**
-`256KB, 512KB, 1MB, 2MB, 4MB, 8MB, 16MB, 32MB, 64MB, 128MB, 256MB, 512MB, 1GB`
+| `http_request_duration_seconds` | Duration of HTTP requests in seconds ⏱️ | Histogram | `origin`, `method`, `route`, `status` |
+| `http_request_content_length_bytes` | Size of request payloads in bytes 📤 | Histogram | `origin`, `method`, `route`, `status` |
+| `http_response_content_length_bytes` | Size of response payloads in bytes 📥 | Histogram | `origin`, `method`, `route`, `status` |
+| `strapi_version_info` | Strapi version information 🏷️ | Gauge | `version` |
+| `lifecycle_duration_seconds` | Duration of Strapi database lifecycle events 💾 | Histogram | `event` |
 
 ### Optional System Metrics
 
@@ -149,63 +124,12 @@ When `collectDefaultMetrics` is enabled, you'll also get Node.js process metrics
 - `nodejs_external_memory_bytes` - External memory usage
 - And more...
 
-## � Configuration Options
-
-### `collectDefaultMetrics`
-
-Controls collection of Node.js process metrics:
-
-```js
-// Disable default metrics (default)
-collectDefaultMetrics: false
-
-// Enable with default settings
-collectDefaultMetrics: true
-
-// Enable with custom prefix
-collectDefaultMetrics: { 
-  prefix: 'my_app_',
-  register: undefined, // Uses default registry
-  gcDurationBuckets: [0.001, 0.01, 0.1, 1, 2, 5], // Custom GC buckets
-  eventLoopMonitoringPrecision: 10 // Event loop precision
-}
-```
-
-### `labels`
-
-Global labels added to all metrics:
-
-```js
-labels: {
-  app: 'my-app',
-  environment: 'production',
-  version: '1.0.0',
-  datacenter: 'us-east-1'
-}
-```
-
-### `server`
-
-Metrics server configuration:
-
-```js
-// Dedicated server (recommended)
-server: {
-  port: 9000,
-  host: '0.0.0.0',
-  path: '/metrics'
-}
-
-// Disable dedicated server (adds /metrics to main Strapi server)
-server: false
-```
-
 ## 🚀 Quick Start
 
-1. Install and configure the plugin (see [Installation](#-installation))
-2. Start your Strapi application
-3. Metrics will be available at `http://localhost:9000/metrics`
-4. Configure Prometheus to scrape this endpoint
+1. 📦 Install and configure the plugin (see [Installation](#-installation))
+2. 🎬 Start your Strapi application
+3. 📊 Metrics will be available at `http://localhost:9000/metrics`
+4. 🔗 Configure Prometheus to scrape this endpoint
 
 ## 📊 Accessing Metrics
 
@@ -251,70 +175,14 @@ You can expose metrics on your main Strapi server by setting `server: false`:
 
 **We strongly recommend using the dedicated server approach.**
 
-## 🖐 Compatibility
+## 🤝 Compatibility
 
 | Strapi Version | Plugin Version | Status |
 |---------------|----------------|---------|
-| v5.x | v2.x.x | ✅ Fully Supported |
-| v4.x | v1.x.x | ✅ Legacy Support |
+| v5.x | v2.x.x | ✅ Fully Supported ⭐ |
+| v4.x | v1.x.x | ❌ EOL 🔧 |
 
-> **Note**: For new projects, we recommend using Strapi v5.x with the latest plugin version.
-
-## 📊 Prometheus Configuration Example
-
-> [!NOTE]
-> This plugin only exposes metrics - you need to set up your own Prometheus instance to collect them.
-
-Here's a basic Prometheus configuration to scrape metrics from the dedicated server:
-
-```yml
-# prometheus.yml
-global:
-  scrape_interval: 15s     # How frequently to scrape targets
-  evaluation_interval: 15s # How frequently to evaluate rules
-
-rule_files:
-  # - "first_rules.yml"
-  # - "second_rules.yml"
-
-scrape_configs:
-  - job_name: "strapi-app"
-    static_configs:
-      - targets: ["localhost:9000"]  # Metrics server endpoint
-    scrape_interval: 10s             # Override global interval
-    metrics_path: /metrics           # Metrics endpoint path
-    
-    # Optional: Add additional labels to all metrics from this job
-    relabel_configs:
-      - target_label: 'app'
-        replacement: 'my-strapi-app'
-```
-
-### Docker Compose Example
-
-If you're running Strapi in Docker, here's a complete example:
-
-```yml
-version: '3.8'
-services:
-  strapi:
-    image: my-strapi-app
-    ports:
-      - "1337:1337"  # Strapi app
-      - "9000:9000"  # Metrics (expose only to monitoring network)
-    
-  prometheus:
-    image: prom/prometheus:latest
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/etc/prometheus/console_libraries'
-      - '--web.console.templates=/etc/prometheus/consoles'
-```
+> **Note**: For new projects, we recommend using Strapi v5.x with the latest plugin version! 🎯
 
 ## 📊 Grafana Dashboards
 
@@ -324,42 +192,9 @@ Ready-to-use Grafana dashboards for visualizing your Strapi metrics:
 
 - **[Dashboard 14565](https://grafana.com/grafana/dashboards/14565)** - Comprehensive Strapi monitoring dashboard
 
-### Custom Dashboard Examples
-
-You can create custom dashboards using queries like:
-
-```promql
-# Average request duration by route
-rate(http_request_duration_seconds_sum[5m]) / rate(http_request_duration_seconds_count[5m])
-
-# Request rate by route pattern
-sum(rate(http_request_duration_seconds_count[5m])) by (route)
-
-# Request rate by method and status
-sum(rate(http_request_duration_seconds_count[5m])) by (method, status)
-
-# Error rate by route
-sum(rate(http_request_duration_seconds_count{status=~"5.."}[5m])) by (route) / sum(rate(http_request_duration_seconds_count[5m])) by (route)
-
-# Active requests by route
-sum(http_active_requests) by (route)
-
-# Top slowest API endpoints
-topk(10, histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) by (route))
-
-# Request throughput by origin
-sum(rate(http_request_duration_seconds_count[5m])) by (origin)
-
-# Response size distribution
-histogram_quantile(0.95, rate(http_response_content_length_bytes_bucket[5m])) by (route)
-
-# Memory usage (when collectDefaultMetrics is enabled)
-nodejs_heap_size_used_bytes / nodejs_heap_size_total_bytes
-```
-
 ### Contributing Dashboards
 
-Have a great dashboard? We'd love to feature it! Please [open a pull request](https://github.com/XanderD99/strapi-prometheus) with your dashboard JSON.
+Have a great dashboard? We'd love to feature it! Please [open a pull request](https://github.com/XanderD99/strapi-prometheus) with your dashboard JSON. 🎨
 
 ## 🔍 Troubleshooting
 
@@ -383,23 +218,7 @@ Have a great dashboard? We'd love to feature it! Please [open a pull request](ht
 - Review custom labels - avoid high-cardinality labels
 - Monitor Prometheus scrape interval
 
-### Debug Mode
-
-Enable debug logging to troubleshoot issues:
-
-```js
-// config/plugins.js
-module.exports = {
-  prometheus: {
-    enabled: true,
-    config: {
-      // ... your config
-    }
-  }
-};
-```
-
-### Getting Help
+### 🆘 Getting Help
 
 - 🐛 [Report bugs](https://github.com/XanderD99/strapi-prometheus/issues)
 - 💡 [Request features](https://github.com/XanderD99/strapi-prometheus/issues)
@@ -496,27 +315,27 @@ We welcome contributions! Here's how you can help:
 
 ### 🐛 Reporting Issues
 
-- Use the [issue tracker](https://github.com/XanderD99/strapi-prometheus/issues)
-- Search existing issues before creating new ones
-- Provide clear reproduction steps
-- Include environment details (Strapi version, Node.js version, OS)
+- Use the [issue tracker](https://github.com/XanderD99/strapi-prometheus/issues) 📝
+- Search existing issues before creating new ones 🔍
+- Provide clear reproduction steps 📋
+- Include environment details (Strapi version, Node.js version, OS) 💻
 
 ### 💻 Development
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Make your changes
-4. Add tests if applicable
-5. Commit with clear messages: `git commit -m 'Add amazing feature'`
-6. Push to your branch: `git push origin feature/amazing-feature`
-7. Open a Pull Request
+1. Fork the repository 🍴
+2. Create a feature branch: `git checkout -b feature/amazing-feature` 🌿
+3. Make your changes ✨
+4. Add tests if applicable 🧪
+5. Commit with clear messages: `git commit -m 'Add amazing feature'` 💬
+6. Push to your branch: `git push origin feature/amazing-feature` 🚀
+7. Open a Pull Request 🔄
 
 ### 📝 Documentation
 
-- Improve README documentation
-- Add code examples
-- Create tutorials or blog posts
-- Share Grafana dashboards
+- Improve README documentation 📖
+- Add code examples 💡
+- Create tutorials or blog posts ✍️
+- Share Grafana dashboards 📊
 
 ## 📜 License
 
