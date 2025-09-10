@@ -223,7 +223,7 @@ If you set `server: false`, metrics will be available on your main Strapi server
 
 ```bash
 # Requires authentication token
-curl -H "Authorization: Bearer YOUR_API_TOKEN" http://localhost:1337/metrics
+curl -H "Authorization: Bearer YOUR_API_TOKEN" http://localhost:1337/api/metrics
 ```
 
 ## 👮‍♀️ Security Considerations

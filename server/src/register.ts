@@ -8,7 +8,7 @@ const versionMetric = new Gauge({
   labelNames: ['version','major','minor','patch']
 });
 
-const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
+export default async ({ strapi }: { strapi: Core.Strapi }) => {
   const { config } = strapi.plugin('prometheus');
 
   const labels = config('labels');
@@ -21,16 +21,7 @@ const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
 
   const serverConfig: false | { port: number, host: string, path: string } = strapi.plugin('prometheus').config('server');
 
-  if (typeof serverConfig === 'boolean' && !serverConfig) return strapi.server.routes([
-    {
-      method: 'GET',
-      path: '/metrics',
-      handler: async (ctx) => {
-        ctx.response.headers['Content-Type'] = prom.register.contentType;
-        ctx.body = await prom.register.metrics()
-      }
-    }
-  ])
+  if (typeof serverConfig === 'boolean' && !serverConfig) return;
 
   const http = await import('http');
 
@@ -59,4 +50,3 @@ const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
   versionMetric.set({version,major,minor,patch}, 1)
 };
 
-export default bootstrap;
