@@ -20,7 +20,7 @@ export interface Config {
 export default {
   default: {
     normalize: [
-      [/\/[a-z0-9]{24,25}|\d/, '/:id'], // Document IDs or numeric IDs
+      [/\/[a-z0-9]{24,25}|\d+/, '/:id'], // Document IDs or numeric IDs
       [/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file'], // Uploaded files with extensions
     ] as PathNormalizationRule[],
     collectDefaultMetrics: { prefix: '' },

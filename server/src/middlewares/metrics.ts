@@ -51,8 +51,10 @@ export default async (ctx: Context, next) => {
   const config: NormalizationConfig = strapi.plugin('prometheus').config('normalize');
 
   let route = ctx.path;
-  if (Array.isArray(config)) route = normalizePath(ctx.path, config);
-  else if (typeof config === 'function') route = config.call(null, ctx);
+  if (config) {
+    if (Array.isArray(config)) route = normalizePath(ctx.path, config);
+    else if (typeof config === 'function') route = config.call(null, ctx);
+  }
 
   const end = requestDurationSeconds.startTimer();
 
