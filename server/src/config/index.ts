@@ -20,19 +20,8 @@ export interface Config {
 export default {
   default: {
     normalize: [
-      [/^\/api\/([^\/]+)\/([^\/]+)$/, '/api/$1/:id'], // /api/posts/123
-      [/^\/api\/([^\/]+)\/([^\/]+)\/([^\/]+)$/, '/api/$1/:id/$3'], // /api/posts/123/comments
-      [/^\/api\/([^\/]+)\/([^\/]+)\/([^\/]+)\/([^\/]+)$/, '/api/$1/$2/:id/$4'], // /api/posts/123/comments/456
-
-      // i18n locale routes (preserve locale but normalize what follows)
-      [/^\/([a-z]{2}(-[A-Z]{2})?)\/api\/([^\/]+)\/([^\/]+)$/, '/$1/api/$3/:id'],
-      [/^\/([a-z]{2}(-[A-Z]{2})?)\//, '/:locale/'],
-
-      // Admin routes with complex patterns
-      [/^\/admin\/content-manager\/([^\/]+)\/([^\/]+)\/([^\/]+)$/, '/admin/content-manager/$1/:contentType/:id'],
-      [/^\/admin\/([^\/]+)\/([^\/]+)\/([^\/]+)$/, '/admin/$1/:type/:id'],
-
-      [/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file'],
+      [/\/[a-z0-9]{24,25}|\d/, '/:id'], // Document IDs or numeric IDs
+      [/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file'], // Uploaded files with extensions
     ] as PathNormalizationRule[],
     collectDefaultMetrics: { prefix: '' },
     labels: [],

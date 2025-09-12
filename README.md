@@ -74,21 +74,8 @@ module.exports = {
       
       // 🎯 Path Normalization Rules
       normalize: [
-        // Strapi API routes
-        [/^\/api\/([^\/]+)\/([^\/]+)$/, '/api/$1/:id'],                    // /api/posts/123
-        [/^\/api\/([^\/]+)\/([^\/]+)\/([^\/]+)$/, '/api/$1/:id/$3'],       // /api/posts/123/comments
-        [/^\/api\/([^\/]+)\/([^\/]+)\/([^\/]+)\/([^\/]+)$/, '/api/$1/$2/:id/$4'], // /api/posts/123/comments/456
-        
-        // i18n locale routes
-        [/^\/([a-z]{2}(-[A-Z]{2})?)\/api\/([^\/]+)\/([^\/]+)$/, '/$1/api/$3/:id'],
-        [/^\/([a-z]{2}(-[A-Z]{2})?)\//, '/:locale/'],
-        
-        // Admin routes
-        [/^\/admin\/content-manager\/([^\/]+)\/([^\/]+)\/([^\/]+)$/, '/admin/content-manager/$1/:contentType/:id'],
-        [/^\/admin\/([^\/]+)\/([^\/]+)\/([^\/]+)$/, '/admin/$1/:type/:id'],
-        
-        // Upload routes
-        [/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file']
+        [/[a-z0-9]{24,25}|\d/, ':id'], // Document IDs or numeric IDs
+        [/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file'], // Uploaded files with extensions
       ]
     }
   }
@@ -169,15 +156,8 @@ Use an array of `[RegExp, replacement]` tuples to define normalization patterns:
 
 ```js
 normalize: [
-  // Strapi API routes
-  [/^\/api\/([^\/]+)\/([^\/]+)$/, '/api/$1/:id'],                    // /api/posts/123
-  [/^\/api\/([^\/]+)\/([^\/]+)\/([^\/]+)$/, '/api/$1/:id/$3'],       // /api/posts/123/comments
-  
-  // Admin routes
-  [/^\/admin\/content-manager\/([^\/]+)\/([^\/]+)\/([^\/]+)$/, '/admin/content-manager/$1/:contentType/:id'],
-  
-  // Upload routes
-  [/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file'],
+  [/[a-z0-9]{24,25}|\d/, ':id'], // Document IDs or numeric IDs
+  [/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file'], // Uploaded files with extensions
   
   // Custom patterns
   [/\/users\/\d+/, '/users/:id'],                                   // /users/123

@@ -50,7 +50,9 @@ function normalizePath(path: string, rules: PathNormalizationRule[]): string {
 export default async (ctx: Context, next) => {
   const config: NormalizationConfig = strapi.plugin('prometheus').config('normalize');
 
-  const route = Array.isArray(config) ? normalizePath(ctx.path, config) : config.call(null, ctx);
+  let route = ctx.path;
+  if (Array.isArray(config)) route = normalizePath(ctx.path, config);
+  else if (typeof config === 'function') route = config.call(null, ctx);
 
   const end = requestDurationSeconds.startTimer();
 
