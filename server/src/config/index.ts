@@ -1,13 +1,28 @@
 import { DefaultMetricsCollectorConfiguration, RegistryContentType } from "prom-client";
+import { Context } from "koa";
+
+export type PathNormalizationRule = [RegExp, string];
+
+/**
+ * Normalization configuration can be:
+ * - Array of normalization rules (tuples of [RegExp, string])
+ * - Function that takes context and returns either a normalized string
+ */
+export type NormalizationConfig = PathNormalizationRule[] | ((ctx: Context) => string);
 
 export interface Config {
   labels: object;
-  collectDefaultMetrics: false | DefaultMetricsCollectorConfiguration<RegistryContentType>
-  server: false | { port: number, host: string, path: string }
+  collectDefaultMetrics: false | DefaultMetricsCollectorConfiguration<RegistryContentType>;
+  server: false | { port: number, host: string, path: string };
+  normalize: NormalizationConfig;
 }
 
 export default {
   default: {
+    normalize: [
+      [/\/(?:[a-z0-9]{24,25}|\d+)(?=\/|$)/, '/:id'], // Document IDs or numeric IDs
+      [/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file'], // Uploaded files with extensions
+    ] as PathNormalizationRule[],
     collectDefaultMetrics: { prefix: '' },
     labels: [],
     server: {

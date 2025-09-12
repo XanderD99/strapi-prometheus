@@ -1,4 +1,6 @@
-import { Counter, exponentialBuckets, Gauge, Histogram } from "prom-client";
+import { exponentialBuckets, Histogram } from "prom-client";
+import { Context } from "koa";
+import { NormalizationConfig, PathNormalizationRule } from "src/config";
 
 const requestDurationSeconds = new Histogram({
   name: 'http_request_duration_seconds',
@@ -33,36 +35,27 @@ const responseContentLengthBytes = new Histogram({
   buckets: exponentialBuckets(1024, 2, 20) // Buckets starting from 1 KB to 1 GB (1024 * 2^19 = ~536 MB, 2^20 = ~1 GB)
 });
 
-function getRoutePattern(ctx: any): string {
-  // First try the matched route (available after routing)
-  if (ctx._matchedRoute) {
-    return ctx._matchedRoute;
-  }
-
-  // Fallback to normalized path
-  return normalizePath(ctx.path);
-}
-
 /**
  * Normalize path to reduce metric cardinality when matched route isn't available
  */
-function normalizePath(path: string): string {
-  return path
-    // Strapi API routes: /api/articles/123 -> /api/articles/:id
-    .replace(/\/api\/([^\/]+)\/\d+(?:\/.*)?$/, '/api/$1/:id')
-    // Generic numeric IDs
-    .replace(/\/\d+/g, '/:id')
-    // UUIDs
-    .replace(/\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, '/:uuid')
-    // File uploads
-    .replace(/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file')
-    // Clean up
-    .replace(/\/+/g, '/')
-    .replace(/\/$/, '') || '/';
+function normalizePath(path: string, rules: PathNormalizationRule[]): string {
+  for (const [regex, replacement] of rules) {
+    path = path.replace(regex, replacement);
+  }
+
+  return path;
 }
 
 
-export default async (ctx, next) => {
+export default async (ctx: Context, next) => {
+  const config: NormalizationConfig = strapi.plugin('prometheus').config('normalize');
+
+  let route = ctx.path;
+  if (config) {
+    if (Array.isArray(config)) route = normalizePath(ctx.path, config);
+    else if (typeof config === 'function') route = config.call(null, ctx);
+  }
+
   const end = requestDurationSeconds.startTimer();
 
   await next();
@@ -70,7 +63,7 @@ export default async (ctx, next) => {
   // Create final labels with all information
   const labels = {
     method: ctx.method,
-    route: getRoutePattern(ctx),
+    route,
     origin: ctx.origin || 'unknown',
     status: ctx.status
   };

@@ -16,7 +16,7 @@ A powerful middleware plugin that adds comprehensive Prometheus metrics to your 
 - 📊 **Database Lifecycle Tracking** - Monitor Strapi lifecycle events (create, update, delete) duration ⚡
 - 🔌 **Easy Integration** - Simple configuration with sensible defaults - get started in minutes!
 - 🆔 **Version Tracking** - Monitor Strapi version information for deployment tracking
-- 🎯 **Smart Path Normalization** - Automatically converts `/api/users/123` to `/api/users/:id` for better metric cardinality
+- 🎯 **Smart Path Normalization** - Flexible normalization with regex patterns or custom functions to group similar routes for better metric cardinality 📊
 - 📦 **TypeScript Support** - Built with TypeScript for better developer experience
 
 ## ⚡ Installation
@@ -68,9 +68,15 @@ module.exports = {
         port: 9000,           // Metrics server port
         host: '0.0.0.0',      // Metrics server host
         path: '/metrics'      // Metrics endpoint path
-      }
+      },
       // OR disable separate server (use with caution):
       // server: false
+      
+      // 🎯 Path Normalization Rules
+      normalize: [
+        [/\/(?:[a-z0-9]{24,25}|\d+)(?=\/|$)/, '/:id'], // Document IDs or numeric IDs
+        [/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file'], // Uploaded files with extensions
+      ]
     }
   }
 };
@@ -93,6 +99,18 @@ export default {
         port: parseInt(process.env.METRICS_PORT || '9000'),
         host: process.env.METRICS_HOST || '0.0.0.0',
         path: '/metrics'
+      },
+      
+      // Custom normalization function (alternative to array rules)
+      normalize: (ctx) => {
+        let path = ctx.path;
+        
+        // Custom logic for your specific needs
+        if (path.startsWith('/api/')) {
+          path = path.replace(/\/\d+/g, '/:id'); // Replace numeric IDs
+        }
+        
+        return path;
       }
     }
   }
@@ -123,6 +141,73 @@ When `collectDefaultMetrics` is enabled, you'll also get Node.js process metrics
 - `nodejs_heap_size_used_bytes` - Used heap size
 - `nodejs_external_memory_bytes` - External memory usage
 - And more...
+
+## 🎯 Smart Path Normalization
+
+The plugin features intelligent path normalization to ensure optimal metric cardinality by grouping similar routes together ✨
+
+### 📝 Configuration Options
+
+You can configure path normalization in two ways:
+
+#### 1. **Array of Regex Rules** (Recommended)
+
+Use an array of `[RegExp, replacement]` tuples to define normalization patterns:
+
+```js
+normalize: [
+  [/\/(?:[a-z0-9]{24,25}|\d+)(?=\/|$)/, '/:id'], // Document IDs or numeric IDs
+  [/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file'], // Uploaded files with extensions
+  
+  // Custom patterns
+  [/\/users\/\d+/, '/users/:id'],                                   // /users/123
+  [/\/orders\/ORD\d+/, '/orders/:orderCode']                        // /orders/ORD12345
+]
+```
+
+#### 2. **Custom Function**
+
+Use a function for dynamic normalization logic:
+
+```js
+normalize: (ctx) => {
+  let path = ctx.path;
+  
+  // Custom normalization logic
+  if (path.startsWith('/api/')) {
+    path = path.replace(/\/\d+/g, '/:id');           // Replace numeric IDs
+    path = path.replace(/\/[a-f0-9-]{36}/gi, '/:uuid'); // Replace UUIDs
+  }
+  
+  // Multi-tenant example
+  if (path.startsWith('/tenant/')) {
+    path = path.replace(/^\/tenant\/[^\/]+/, '/tenant/:id');
+  }
+  
+  return path;
+}
+```
+
+### 🏷️ Built-in Patterns
+
+The plugin includes pre-configured patterns for common Strapi routes:
+
+| Original Path | Normalized Path | Description |
+|--------------|----------------|-------------|
+| `/api/posts/123` | `/api/posts/:id` | API resource with ID |
+| `/api/posts/123/comments/456` | `/api/posts/:id/comments/:id` | Nested resources |
+| `/admin/content-manager/collection-types/api::post.post/123` | `/admin/content-manager/:type/:contentType/:id` | Admin content manager |
+| `/uploads/image.jpg` | `/uploads/:file` | File uploads |
+| `/en/api/posts/123` | `/:locale/api/posts/:id` | i18n localized routes |
+| `/fr-FR/dashboard` | `/:locale/dashboard` | Locale-specific pages |
+
+### 🚀 Benefits
+
+- ✅ **Low Cardinality** - Groups similar routes to prevent metric explosion
+- ✅ **Prometheus-Friendly** - Follows Prometheus best practices
+- ✅ **Flexible** - Support both regex patterns and custom functions  
+- ✅ **Performance** - Efficient pattern matching with minimal overhead
+- ✅ **Strapi-Aware** - Built-in knowledge of Strapi routing conventions
 
 ## 🚀 Quick Start
 
