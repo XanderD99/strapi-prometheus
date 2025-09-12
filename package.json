@@ -1,6 +1,6 @@
 {
   "name": "strapi-prometheus",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "A powerful Strapi plugin that adds comprehensive Prometheus metrics to monitor your API performance, system resources, and application behavior using prom-client.",
   "keywords": [
     "strapi",
