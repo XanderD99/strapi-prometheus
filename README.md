@@ -74,7 +74,7 @@ module.exports = {
       
       // 🎯 Path Normalization Rules
       normalize: [
-        [/\/[a-z0-9]{24,25}|\d+/, '/:id'], // Document IDs or numeric IDs
+        [/\/(?:[a-z0-9]{24,25}|\d+)(?=\/|$)/, '/:id'], // Document IDs or numeric IDs
         [/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file'], // Uploaded files with extensions
       ]
     }
@@ -156,7 +156,7 @@ Use an array of `[RegExp, replacement]` tuples to define normalization patterns:
 
 ```js
 normalize: [
-  [/[a-z0-9]{24,25}|\d/, ':id'], // Document IDs or numeric IDs
+  [/\/(?:[a-z0-9]{24,25}|\d+)(?=\/|$)/, '/:id'], // Document IDs or numeric IDs
   [/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file'], // Uploaded files with extensions
   
   // Custom patterns
