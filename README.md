@@ -123,9 +123,9 @@ The plugin automatically collects the following metrics with intelligent route p
 
 | Metric Name | Description | Type | Labels |
 |-------------|-------------|------|--------|
-| `http_request_duration_seconds` | Duration of HTTP requests in seconds ⏱️ | Histogram | `origin`, `method`, `route`, `status` |
-| `http_request_content_length_bytes` | Size of request payloads in bytes 📤 | Histogram | `origin`, `method`, `route`, `status` |
-| `http_response_content_length_bytes` | Size of response payloads in bytes 📥 | Histogram | `origin`, `method`, `route`, `status` |
+| `http_request_duration_seconds` | Duration of HTTP requests in seconds ⏱️ | Histogram | `method`, `route`, `status` |
+| `http_request_content_length_bytes` | Size of request payloads in bytes 📤 | Histogram | `method`, `route`, `status` |
+| `http_response_content_length_bytes` | Size of response payloads in bytes 📥 | Histogram | `method`, `route`, `status` |
 | `strapi_version_info` | Strapi version information 🏷️ | Gauge | `version` |
 | `lifecycle_duration_seconds` | Duration of Strapi database lifecycle events 💾 | Histogram | `event` |
 
@@ -371,7 +371,6 @@ module.exports = {
 - **Smart route detection** - Uses `_matchedRoute` when available for accurate patterns
 - **Consistent normalization** - `/api/articles/123` → `/api/articles/:id`
 - **Low cardinality** - Prevents metric explosion from dynamic paths
-- **Added `origin` label** - Track requests by source
 
 ### 🔄 Migration Steps
 
