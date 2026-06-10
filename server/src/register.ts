@@ -22,12 +22,11 @@ export default async ({ strapi }: { strapi: Core.Strapi }) => {
   const serverConfig: false | { port: number, host: string, path: string } = strapi.plugin('prometheus').config('server');
 
   if (typeof serverConfig === 'boolean' && !serverConfig) {
-    if (!config('apiKey')) {
-      strapi.log.warn(
-        '[prometheus] server is disabled and no `apiKey` is configured; the /metrics route will reject all requests. ' +
-        'Set the `apiKey` config option to allow access.'
-      );
-    }
+    strapi.log.warn(
+      '[prometheus] Metrics are exposed on /api/metrics on your main Strapi server. ' +
+      'Do NOT grant this endpoint to any public role, and protect it with an API key (or token). ' +
+      'See the plugin README "Security Considerations" section.'
+    );
     return;
   }
 

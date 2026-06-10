@@ -69,13 +69,8 @@ module.exports = {
         host: '127.0.0.1',    // Metrics server host (bind to 0.0.0.0 only if access is restricted at the network layer)
         path: '/metrics'      // Metrics endpoint path
       },
-      // OR disable the separate server and expose /metrics on the main app,
-      // guarded by the API key below (use with caution):
-      // server: false,
-
-      // Required only when `server: false`. Callers must then send
-      // `Authorization: Bearer <apiKey>`. Keep this secret out of source control.
-      // apiKey: process.env.METRICS_API_KEY,
+      // OR disable separate server (use with caution):
+      // server: false
       
       // 🎯 Path Normalization Rules
       normalize: [
@@ -233,16 +228,20 @@ curl http://localhost:9000/metrics
 
 ### Main Strapi Server (Not Recommended)
 
-If you set `server: false`, metrics are mounted on your main Strapi server at
-`/metrics`, guarded by a shared API key. The route bypasses the default auth
-strategies and is protected in code by the plugin's `hasApiKey` policy, so it can
-never be exposed to unauthenticated clients — and it **fails closed**: if no
-`apiKey` is configured, every request is rejected.
+If you set `server: false`, metrics are mounted on your main Strapi server's
+content-api at `/api/metrics`:
 
 ```bash
-# Requires the configured apiKey
-curl -H "Authorization: Bearer YOUR_METRICS_API_KEY" http://localhost:1337/metrics
+# Requires an API token
+curl -H "Authorization: Bearer YOUR_API_TOKEN" http://localhost:1337/api/metrics
 ```
+
+> [!WARNING]
+> The `/api/metrics` route is **not** authenticated by the plugin. **Do NOT grant
+> the `metrics.find` permission to the Public role** — doing so makes the full
+> Prometheus exposition world-readable without a token. Always protect it with an
+> API key/token (and restrict access at the network layer where possible). The
+> plugin logs this warning at startup when `server: false`.
 
 ## 👮‍♀️ Security Considerations
 
@@ -293,13 +292,10 @@ location /metrics {
 ### Alternative: Main Server Integration
 
 You can expose metrics on your main Strapi server by setting `server: false`. The
-route is mounted at `/metrics` and guarded in code by the plugin's `hasApiKey`
-policy:
+route is mounted on the content-api at `/api/metrics`:
 
-- ✅ **Authentication enforced in code** - The `hasApiKey` policy runs on every request; there is no way to expose the route unauthenticated
-- ✅ **Scraper-friendly** - Prometheus can authenticate with a static `Authorization: Bearer <apiKey>` header
-- ✅ **Fails closed** - With no `apiKey` configured, the route rejects every request
-- ⚠️ **Set a strong, secret key** - Use a long random value via `process.env.METRICS_API_KEY`; rotate it like any other credential
+- ⚠️ **Not authenticated by the plugin** - Do NOT grant the `metrics.find` permission to the Public role, or your metrics become world-readable without a token
+- ⚠️ **Use an API key/token** - Protect the endpoint with a Strapi API token and restrict access at the network layer where possible
 - ⚠️ **Potential exposure** - Metrics endpoint shares the main application's surface
 - ⚠️ **Performance impact** - Additional load on the main server
 
