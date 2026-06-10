@@ -228,11 +228,14 @@ curl http://localhost:9000/metrics
 
 ### Main Strapi Server (Not Recommended)
 
-If you set `server: false`, metrics will be available on your main Strapi server:
+If you set `server: false`, metrics are mounted on your main Strapi server as an
+**admin** route at `/prometheus/metrics`, guarded by the `admin::isAuthenticatedAdmin`
+policy. This means a request must carry a valid admin session token — it cannot be
+exposed to unauthenticated clients (or content-api API tokens), even by accident:
 
 ```bash
-# Requires authentication token
-curl -H "Authorization: Bearer YOUR_API_TOKEN" http://localhost:1337/api/metrics
+# Requires an authenticated admin session token (not a content-api API token)
+curl -H "Authorization: Bearer YOUR_ADMIN_JWT" http://localhost:1337/prometheus/metrics
 ```
 
 ## 👮‍♀️ Security Considerations
@@ -283,15 +286,14 @@ location /metrics {
 
 ### Alternative: Main Server Integration
 
-You can expose metrics on your main Strapi server by setting `server: false`:
+You can expose metrics on your main Strapi server by setting `server: false`. The
+route is mounted as an **admin** route at `/prometheus/metrics`, guarded by the
+`admin::isAuthenticatedAdmin` policy:
 
-- ⚠️ **Authentication required** - Protected by Strapi's auth middleware
-- ⚠️ **API token needed** - Must create and manage API tokens
-- ⚠️ **Potential exposure** - Metrics endpoint on your main application
-- ⚠️ **Performance impact** - Additional load on main server
-
-> [!WARNING]
-> When using `server: false` the metrics route is mounted on Strapi's content-api. Make sure the `metrics.find` permission is **not** granted to the Public role, or your metrics will be world-readable without a token.
+- ✅ **Admin authentication enforced in code** - Requires a valid admin session token; a content-api permission mis-grant cannot expose it
+- ⚠️ **Admin token needed** - Scrapers must present an admin JWT (Prometheus cannot use a static content-api API token)
+- ⚠️ **Potential exposure** - Metrics endpoint shares the main application's surface
+- ⚠️ **Performance impact** - Additional load on the main server
 
 **We recommend keeping the dedicated server bound to `127.0.0.1` (the default) and exposing it only through one of the network-layer options above.**
 

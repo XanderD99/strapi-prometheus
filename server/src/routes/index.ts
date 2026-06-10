@@ -1,10 +1,12 @@
 import type { Core } from '@strapi/types';
-import { createContentApiRoutesFactory } from '@strapi/utils';
 
-const createRoutes = createContentApiRoutesFactory((): Core.RouterInput['routes'] => {
+const buildRoutes = (): Core.RouterInput['routes'] => {
   const serverConfig: false | { port: number, host: string, path: string } = strapi.plugin('prometheus').config('server');
 
-  if (typeof serverConfig !== 'boolean') return []
+  // The in-app metrics route only exists when the dedicated metrics server is
+  // disabled (`server: false`). Otherwise metrics are served by the dedicated
+  // server started in register().
+  if (typeof serverConfig !== 'boolean') return [];
 
   return [
     {
@@ -12,13 +14,18 @@ const createRoutes = createContentApiRoutesFactory((): Core.RouterInput['routes'
       path: '/metrics',
       handler: 'metrics.find',
       config: {
-        prefix: '/'
-      }
+        // Mounted as an admin route guarded by `isAuthenticatedAdmin` so that a
+        // content-api permission mis-grant (e.g. granting the Public role read
+        // access) cannot expose metrics to unauthenticated clients.
+        policies: ['admin::isAuthenticatedAdmin'],
+      },
     },
   ];
-});
-
+};
 
 export default {
-  'content-api': createRoutes
-}
+  admin: () => ({
+    type: 'admin' as const,
+    routes: buildRoutes(),
+  }),
+};
