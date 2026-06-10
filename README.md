@@ -11,7 +11,7 @@ A powerful middleware plugin that adds comprehensive Prometheus metrics to your 
 
 - 🚀 **Real-time API Metrics** - Track HTTP request duration, payload sizes, and response codes with intelligent route normalization
 - 📈 **System Monitoring** - Collect Node.js process metrics as recommended by [Prometheus](https://prometheus.io/docs/instrumenting/writing_clientlibs/#standard-and-runtime-collectors)
-- 🔒 **Secure by Default** - Dedicated metrics server (port 9000) isolated from your main application
+- 🔒 **Private by Default** - Dedicated metrics server binds to `127.0.0.1:9000`, isolated from your main application and not reachable from outside the host until you opt in
 - 🏷️ **Custom Labels** - Add custom labels to categorize and filter your metrics across environments 🌍
 - 📊 **Database Lifecycle Tracking** - Monitor Strapi lifecycle events (create, update, delete) duration ⚡
 - 🔌 **Easy Integration** - Simple configuration with sensible defaults - get started in minutes!
@@ -66,7 +66,7 @@ module.exports = {
       // Set to false to expose metrics on your main Strapi server (not recommended)
       server: {
         port: 9000,           // Metrics server port
-        host: '0.0.0.0',      // Metrics server host
+        host: '127.0.0.1',    // Metrics server host (bind to 0.0.0.0 only if access is restricted at the network layer)
         path: '/metrics'      // Metrics endpoint path
       },
       // OR disable separate server (use with caution):
@@ -97,7 +97,7 @@ export default {
       },
       server: {
         port: parseInt(process.env.METRICS_PORT || '9000'),
-        host: process.env.METRICS_HOST || '0.0.0.0',
+        host: process.env.METRICS_HOST || '127.0.0.1',
         path: '/metrics'
       },
       
@@ -228,37 +228,78 @@ curl http://localhost:9000/metrics
 
 ### Main Strapi Server (Not Recommended)
 
-If you set `server: false`, metrics will be available on your main Strapi server:
+If you set `server: false`, metrics are mounted on your main Strapi server's
+content-api at `/api/metrics`:
 
 ```bash
-# Requires authentication token
+# Requires an API token
 curl -H "Authorization: Bearer YOUR_API_TOKEN" http://localhost:1337/api/metrics
 ```
+
+> [!WARNING]
+> The `/api/metrics` route is **not** authenticated by the plugin. **Do NOT grant
+> the `metrics.find` permission to the Public role** — doing so makes the full
+> Prometheus exposition world-readable without a token. Always protect it with an
+> API key/token (and restrict access at the network layer where possible). The
+> plugin logs this warning at startup when `server: false`.
 
 ## 👮‍♀️ Security Considerations
 
 > [!CAUTION]
-> Metrics can contain sensitive information about your application's usage patterns, performance characteristics, and potentially user behavior. Always secure your metrics endpoint appropriately.
+> The metrics endpoint is **not authenticated**. Anyone who can reach it receives the full Prometheus exposition. Prometheus metrics can reveal sensitive operational detail about your application — exact Strapi version and patch level, your content-type/model names (via `lifecycle_duration_seconds`), internal route paths, request volume and error rates (including failed-login counts on `/api/auth/local`), and process/runtime telemetry such as memory usage, open file descriptors, and event-loop lag. This information is valuable for fingerprinting and planning targeted attacks, so the endpoint must never be exposed to untrusted networks.
 
-### Recommended: Dedicated Server (Default)
+### Default: bound to localhost
 
-The plugin starts a separate server on port 9000 by default, isolated from your main application:
+By default the plugin starts a dedicated metrics server bound to `127.0.0.1:9000`. This keeps the endpoint reachable only from the host itself (and from other containers sharing the same network namespace), so a default install is **not** exposed to your network or the public internet.
 
-- ✅ **Secure by design** - No external access to your main application
-- ✅ **Simple firewall rules** - Block port 9000 from external access
-- ✅ **Performance** - No impact on your main application
-- ✅ **Monitoring-specific** - Dedicated to metrics collection
+> [!IMPORTANT]
+> A separate port is **not** a security boundary on its own. If you bind the metrics server to `0.0.0.0` (all interfaces), publish the port from a Docker container (`-p 9000:9000`), or expose it through a Kubernetes `Service`/`LoadBalancer`, the endpoint becomes reachable by anyone who can route to it — there is no built-in authentication to stop them. The plugin logs a startup warning when `host` is set to `0.0.0.0`.
+
+### Exposing metrics to a scraper
+
+Prometheus usually needs to scrape from another host, so you will often need to make the endpoint reachable beyond `127.0.0.1`. Do this at the network layer rather than opening it to the world:
+
+**Option A — keep it on localhost and scrape locally.** Run a Prometheus agent / node-exporter sidecar on the same host (or in the same Kubernetes pod) and let it scrape `127.0.0.1:9000`. This is the simplest and safest setup.
+
+**Option B — bind to a private interface and firewall it.** Bind to a specific internal address and restrict access to your monitoring network:
+
+```js
+server: {
+  port: 9000,
+  host: '10.0.0.5',   // private/internal interface only — never a public IP
+  path: '/metrics'
+}
+```
+
+```bash
+# Example: only allow your Prometheus host to reach port 9000 (Linux, ufw)
+ufw allow from 10.0.0.10 to any port 9000 proto tcp
+ufw deny 9000
+```
+
+**Option C — put it behind a reverse proxy that enforces auth.** Bind to `127.0.0.1` and let nginx (or Traefik, Caddy, etc.) terminate TLS and require a credential before forwarding:
+
+```nginx
+location /metrics {
+    auth_basic           "metrics";
+    auth_basic_user_file /etc/nginx/.htpasswd;   # or mTLS / an allow-list
+    proxy_pass           http://127.0.0.1:9000/metrics;
+}
+```
+
+**Docker / Kubernetes note:** do not publish port 9000 to the host (`-p 9000:9000`) or expose it via a public `Service`/`LoadBalancer`. Keep it on an internal network and scrape it from within the cluster.
 
 ### Alternative: Main Server Integration
 
-You can expose metrics on your main Strapi server by setting `server: false`:
+You can expose metrics on your main Strapi server by setting `server: false`. The
+route is mounted on the content-api at `/api/metrics`:
 
-- ⚠️ **Authentication required** - Protected by Strapi's auth middleware
-- ⚠️ **API token needed** - Must create and manage API tokens
-- ⚠️ **Potential exposure** - Metrics endpoint on your main application
-- ⚠️ **Performance impact** - Additional load on main server
+- ⚠️ **Not authenticated by the plugin** - Do NOT grant the `metrics.find` permission to the Public role, or your metrics become world-readable without a token
+- ⚠️ **Use an API key/token** - Protect the endpoint with a Strapi API token and restrict access at the network layer where possible
+- ⚠️ **Potential exposure** - Metrics endpoint shares the main application's surface
+- ⚠️ **Performance impact** - Additional load on the main server
 
-**We strongly recommend using the dedicated server approach.**
+**We recommend keeping the dedicated server bound to `127.0.0.1` (the default) and exposing it only through one of the network-layer options above.**
 
 ## 🤝 Compatibility
 
@@ -312,86 +353,7 @@ Have a great dashboard? We'd love to feature it! Please [open a pull request](ht
 
 ## 🏗️ v1 → v2 Migration Guide
 
-## 🏗️ Migration Guide (v1 → v2)
-
-Version 2.0 brings significant improvements and Strapi v5 support. Here's what you need to know:
-
-### 🔧 Configuration Changes
-
-**Old (v1):**
-
-```js
-module.exports = {
-  'strapi-prometheus': {
-    enabled: true,
-    config: {
-      // v1 config
-    }
-  }
-};
-```
-
-**New (v2):**
-
-```js
-module.exports = {
-  prometheus: {  // ← Plugin name simplified
-    enabled: true,
-    config: {
-      // v2 config (see configuration section above)
-    }
-  }
-};
-```
-
-### 🚀 New Features in v2
-
-- **Dedicated metrics server** - Default behavior for better security
-- **Simplified configuration** - Easier setup and maintenance  
-- **Strapi v5 support** - Future-ready compatibility
-- **Enhanced metrics** - More comprehensive monitoring
-- **Improved performance** - Optimized for production use
-
-### 📊 Metric and Label Changes
-
-| v1 Metric | v2 Metric | Change |
-|-----------|-----------|---------|
-| `http_request_duration_s` | `http_request_duration_seconds` | ✅ Renamed for clarity |
-| `http_request_size_bytes` | `http_request_content_length_bytes` | ✅ Renamed for accuracy |
-| `http_response_size_bytes` | `http_response_content_length_bytes` | ✅ Renamed for accuracy |
-| Labels: `path` | Labels: `route` | ✅ More consistent route patterns |
-| Apollo metrics | ❌ | 🗑️ Removed - use [apollo-prometheus-exporter](https://github.com/bfmatei/apollo-prometheus-exporter) |
-| - | `http_requests_total` | ✅ New counter metric |
-| - | `http_active_requests` | ✅ New gauge metric |
-
-### 🏷️ Enhanced Label Strategy
-
-**v2 Improvements:**
-
-- **Smart route detection** - Uses `_matchedRoute` when available for accurate patterns
-- **Consistent normalization** - `/api/articles/123` → `/api/articles/:id`
-- **Low cardinality** - Prevents metric explosion from dynamic paths
-
-### 🔄 Migration Steps
-
-1. **Update plugin name** in your configuration
-2. **Review new configuration options** (especially `server` settings)
-3. **Update Prometheus scrape config** if using custom settings
-4. **Update Grafana dashboards** with new metric names
-5. **Test thoroughly** in development before production deployment
-
-### ⚠️ Breaking Changes
-
-- **Apollo metrics removed** - If you were using Apollo GraphQL metrics, you'll need to implement them separately
-- **Custom registry removed** - Now uses the default `prom-client` registry (this actually gives you more flexibility!)
-- **Configuration structure changed** - Follow the new configuration format
-
-### 💡 Recommendations
-
-- Start with default settings and customize as needed
-- Use the dedicated metrics server (default behavior)
-- Monitor your Prometheus targets after migration
-- Consider this a good time to review your monitoring setup
+Upgrading from v1 (Strapi v4) to v2 (Strapi v5)? See the dedicated [Migration Guide (v1 → v2)](docs/migration-v1-to-v2.md) for plugin-name, configuration, metric/label, and breaking changes.
 
 ## 🤝 Contributing
 

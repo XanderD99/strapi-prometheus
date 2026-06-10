@@ -21,7 +21,14 @@ export default async ({ strapi }: { strapi: Core.Strapi }) => {
 
   const serverConfig: false | { port: number, host: string, path: string } = strapi.plugin('prometheus').config('server');
 
-  if (typeof serverConfig === 'boolean' && !serverConfig) return;
+  if (typeof serverConfig === 'boolean' && !serverConfig) {
+    strapi.log.warn(
+      '[prometheus] Metrics are exposed on /api/metrics on your main Strapi server. ' +
+      'Do NOT grant this endpoint to any public role, and protect it with an API key (or token). ' +
+      'See the plugin README "Security Considerations" section.'
+    );
+    return;
+  }
 
   const http = await import('http');
 
@@ -36,6 +43,13 @@ export default async ({ strapi }: { strapi: Core.Strapi }) => {
       res.end('Not Found');
     }
   });
+
+  if (serverConfig.host === '0.0.0.0') {
+    strapi.log.warn(
+      `[prometheus] Metrics server is bound to 0.0.0.0, exposing ${serverConfig.path} on all network interfaces with no authentication. ` +
+      `Restrict access at the network layer (firewall, reverse proxy) or bind to 127.0.0.1. See the plugin README "Security Considerations" section.`
+    );
+  }
 
   server.listen(serverConfig.port, serverConfig.host, () => {
     strapi.log.info(`Serving metrics on http://${serverConfig.host}:${serverConfig.port}${serverConfig.path}`);
