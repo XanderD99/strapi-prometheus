@@ -37,6 +37,13 @@ export default async ({ strapi }: { strapi: Core.Strapi }) => {
     }
   });
 
+  if (serverConfig.host === '0.0.0.0') {
+    strapi.log.warn(
+      `[prometheus] Metrics server is bound to 0.0.0.0, exposing ${serverConfig.path} on all network interfaces with no authentication. ` +
+      `Restrict access at the network layer (firewall, reverse proxy) or bind to 127.0.0.1. See the plugin README "Security Considerations" section.`
+    );
+  }
+
   server.listen(serverConfig.port, serverConfig.host, () => {
     strapi.log.info(`Serving metrics on http://${serverConfig.host}:${serverConfig.port}${serverConfig.path}`);
   });
