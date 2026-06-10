@@ -14,10 +14,11 @@ const buildRoutes = (): Core.RouterInput['routes'] => {
       path: '/metrics',
       handler: 'metrics.find',
       config: {
-        // Mounted as an admin route guarded by `isAuthenticatedAdmin` so that a
-        // content-api permission mis-grant (e.g. granting the Public role read
-        // access) cannot expose metrics to unauthenticated clients.
-        policies: ['admin::isAuthenticatedAdmin'],
+        // Skip the default admin auth and guard the route with our own API key
+        // policy instead, so it can be scraped with a static `Authorization:
+        // Bearer <apiKey>` header rather than an admin session token.
+        auth: false,
+        policies: ['plugin::prometheus.hasApiKey'],
       },
     },
   ];
@@ -26,6 +27,9 @@ const buildRoutes = (): Core.RouterInput['routes'] => {
 export default {
   admin: () => ({
     type: 'admin' as const,
+    // Mount at the server root so the endpoint is `/metrics` rather than
+    // `/prometheus/metrics`.
+    prefix: '',
     routes: buildRoutes(),
   }),
 };

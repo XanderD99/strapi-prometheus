@@ -15,6 +15,12 @@ export interface Config {
   collectDefaultMetrics: false | DefaultMetricsCollectorConfiguration<RegistryContentType>;
   server: false | { port: number, host: string, path: string };
   normalize: NormalizationConfig;
+  /**
+   * Shared API key required to access the in-app metrics route when
+   * `server: false`. Callers must send `Authorization: Bearer <apiKey>`.
+   * When unset, the in-app metrics route rejects every request.
+   */
+  apiKey?: string;
 }
 
 export default {

@@ -69,8 +69,13 @@ module.exports = {
         host: '127.0.0.1',    // Metrics server host (bind to 0.0.0.0 only if access is restricted at the network layer)
         path: '/metrics'      // Metrics endpoint path
       },
-      // OR disable separate server (use with caution):
-      // server: false
+      // OR disable the separate server and expose /metrics on the main app,
+      // guarded by the API key below (use with caution):
+      // server: false,
+
+      // Required only when `server: false`. Callers must then send
+      // `Authorization: Bearer <apiKey>`. Keep this secret out of source control.
+      // apiKey: process.env.METRICS_API_KEY,
       
       // 🎯 Path Normalization Rules
       normalize: [
@@ -228,14 +233,15 @@ curl http://localhost:9000/metrics
 
 ### Main Strapi Server (Not Recommended)
 
-If you set `server: false`, metrics are mounted on your main Strapi server as an
-**admin** route at `/prometheus/metrics`, guarded by the `admin::isAuthenticatedAdmin`
-policy. This means a request must carry a valid admin session token — it cannot be
-exposed to unauthenticated clients (or content-api API tokens), even by accident:
+If you set `server: false`, metrics are mounted on your main Strapi server at
+`/metrics`, guarded by a shared API key. The route bypasses the default auth
+strategies and is protected in code by the plugin's `hasApiKey` policy, so it can
+never be exposed to unauthenticated clients — and it **fails closed**: if no
+`apiKey` is configured, every request is rejected.
 
 ```bash
-# Requires an authenticated admin session token (not a content-api API token)
-curl -H "Authorization: Bearer YOUR_ADMIN_JWT" http://localhost:1337/prometheus/metrics
+# Requires the configured apiKey
+curl -H "Authorization: Bearer YOUR_METRICS_API_KEY" http://localhost:1337/metrics
 ```
 
 ## 👮‍♀️ Security Considerations
@@ -287,11 +293,13 @@ location /metrics {
 ### Alternative: Main Server Integration
 
 You can expose metrics on your main Strapi server by setting `server: false`. The
-route is mounted as an **admin** route at `/prometheus/metrics`, guarded by the
-`admin::isAuthenticatedAdmin` policy:
+route is mounted at `/metrics` and guarded in code by the plugin's `hasApiKey`
+policy:
 
-- ✅ **Admin authentication enforced in code** - Requires a valid admin session token; a content-api permission mis-grant cannot expose it
-- ⚠️ **Admin token needed** - Scrapers must present an admin JWT (Prometheus cannot use a static content-api API token)
+- ✅ **Authentication enforced in code** - The `hasApiKey` policy runs on every request; there is no way to expose the route unauthenticated
+- ✅ **Scraper-friendly** - Prometheus can authenticate with a static `Authorization: Bearer <apiKey>` header
+- ✅ **Fails closed** - With no `apiKey` configured, the route rejects every request
+- ⚠️ **Set a strong, secret key** - Use a long random value via `process.env.METRICS_API_KEY`; rotate it like any other credential
 - ⚠️ **Potential exposure** - Metrics endpoint shares the main application's surface
 - ⚠️ **Performance impact** - Additional load on the main server
 
