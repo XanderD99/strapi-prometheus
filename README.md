@@ -31,17 +31,7 @@ yarn add strapi-prometheus
 pnpm add strapi-prometheus
 ```
 
-### 2. Install peer dependencies 🔧
-
-```bash
-npm install prom-client
-# or
-yarn add prom-client
-# or
-pnpm add prom-client
-```
-
-### 3. Enable the plugin ⚙️
+### 2. Enable the plugin ⚙️
 
 ```js
 // config/plugins.js
