@@ -24,7 +24,7 @@ body:
     attributes:
       label: 🎯 Problem/Use Case
       description: Is your feature request related to a problem? Please describe the use case
-      placeholder: "Example: I need to monitor custom business metrics alongside HTTP metrics"
+      placeholder: 'Example: I need to monitor custom business metrics alongside HTTP metrics'
     validations:
       required: true
 
@@ -84,7 +84,7 @@ body:
     attributes:
       label: 🔗 Related Issues/PRs
       description: Link any related issues or pull requests
-      placeholder: "e.g. #123, #456"
+      placeholder: 'e.g. #123, #456'
 
   - type: checkboxes
     id: checklist

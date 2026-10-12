@@ -2,9 +2,11 @@ import type { Core } from '@strapi/types';
 import { createContentApiRoutesFactory } from '@strapi/utils';
 
 const createRoutes = createContentApiRoutesFactory((): Core.RouterInput['routes'] => {
-  const serverConfig: false | { port: number, host: string, path: string } = strapi.plugin('prometheus').config('server');
+  const serverConfig: false | { port: number; host: string; path: string } = strapi
+    .plugin('prometheus')
+    .config('server');
 
-  if (typeof serverConfig !== 'boolean') return []
+  if (typeof serverConfig !== 'boolean') return [];
 
   return [
     {
@@ -12,13 +14,12 @@ const createRoutes = createContentApiRoutesFactory((): Core.RouterInput['routes'
       path: '/metrics',
       handler: 'metrics.find',
       config: {
-        prefix: '/'
-      }
+        prefix: '/',
+      },
     },
   ];
 });
 
-
 export default {
-  'content-api': createRoutes
-}
+  'content-api': createRoutes,
+};

@@ -55,7 +55,7 @@ body:
     attributes:
       label: Strapi Version
       description: What version of Strapi are you using?
-      placeholder: "e.g. 5.0.0"
+      placeholder: 'e.g. 5.0.0'
     validations:
       required: true
 
@@ -64,7 +64,7 @@ body:
     attributes:
       label: Plugin Version
       description: What version of the Strapi Prometheus plugin are you using?
-      placeholder: "e.g. 2.2.2"
+      placeholder: 'e.g. 2.2.2'
     validations:
       required: true
 
@@ -86,7 +86,7 @@ body:
     attributes:
       label: Operating System
       description: What operating system are you using?
-      placeholder: "e.g. macOS 13.0, Ubuntu 22.04, Windows 11"
+      placeholder: 'e.g. macOS 13.0, Ubuntu 22.04, Windows 11'
     validations:
       required: true
 
@@ -95,7 +95,7 @@ body:
     attributes:
       label: Node.js Version
       description: What version of Node.js are you using?
-      placeholder: "e.g. 18.17.0"
+      placeholder: 'e.g. 18.17.0'
     validations:
       required: true
 
@@ -104,7 +104,7 @@ body:
     attributes:
       label: Package Manager
       description: What package manager and version are you using?
-      placeholder: "e.g. npm 9.0.0, yarn 3.6.0"
+      placeholder: 'e.g. npm 9.0.0, yarn 3.6.0'
     validations:
       required: true
 
@@ -113,7 +113,7 @@ body:
     attributes:
       label: Prometheus Version
       description: What version of Prometheus are you using?
-      placeholder: "e.g. 2.45.0"
+      placeholder: 'e.g. 2.45.0'
 
   - type: dropdown
     id: metrics-server
@@ -133,8 +133,8 @@ body:
       label: Default Metrics Enabled
       description: Are default metrics enabled in your configuration?
       options:
-        - "Yes"
-        - "No"
+        - 'Yes'
+        - 'No'
     validations:
       required: true
 
