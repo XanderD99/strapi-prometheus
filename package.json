@@ -38,7 +38,9 @@
     "watch": "strapi-plugin watch",
     "watch:link": "strapi-plugin watch:link",
     "verify": "strapi-plugin verify",
-    "test:ts:back": "tsc -p server/tsconfig.json --noEmit"
+    "test:ts:back": "tsc -p server/tsconfig.json --noEmit",
+    "format": "prettier --write . '!**/*.md'",
+    "format:check": "prettier --check . '!**/*.md'"
   },
   "devDependencies": {
     "@strapi/sdk-plugin": "^5.2.6",

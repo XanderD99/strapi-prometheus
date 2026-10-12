@@ -23,7 +23,7 @@ body:
     attributes:
       label: Strapi Version
       description: What version of Strapi are you using?
-      placeholder: "e.g. 5.0.0"
+      placeholder: 'e.g. 5.0.0'
     validations:
       required: true
 
@@ -32,7 +32,7 @@ body:
     attributes:
       label: Plugin Version
       description: What version of the Strapi Prometheus plugin are you using?
-      placeholder: "e.g. 2.2.2"
+      placeholder: 'e.g. 2.2.2'
     validations:
       required: true
 
@@ -41,14 +41,14 @@ body:
     attributes:
       label: Operating System
       description: What operating system are you using?
-      placeholder: "e.g. macOS 13.0, Ubuntu 22.04, Windows 11"
+      placeholder: 'e.g. macOS 13.0, Ubuntu 22.04, Windows 11'
 
   - type: input
     id: nodejs-version
     attributes:
       label: Node.js Version
       description: What version of Node.js are you using?
-      placeholder: "e.g. 18.17.0"
+      placeholder: 'e.g. 18.17.0'
 
   - type: textarea
     id: additional-context

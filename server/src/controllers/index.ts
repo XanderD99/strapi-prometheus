@@ -1,3 +1,3 @@
-import controller from "./controller";
+import controller from './controller';
 
-export default { metrics: controller }
+export default { metrics: controller };

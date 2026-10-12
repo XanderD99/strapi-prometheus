@@ -1,5 +1,5 @@
-import { DefaultMetricsCollectorConfiguration, RegistryContentType } from "prom-client";
-import { Context } from "koa";
+import { DefaultMetricsCollectorConfiguration, RegistryContentType } from 'prom-client';
+import { Context } from 'koa';
 
 export type PathNormalizationRule = [RegExp, string];
 
@@ -13,7 +13,7 @@ export type NormalizationConfig = PathNormalizationRule[] | ((ctx: Context) => s
 export interface Config {
   labels: object;
   collectDefaultMetrics: false | DefaultMetricsCollectorConfiguration<RegistryContentType>;
-  server: false | { port: number, host: string, path: string };
+  server: false | { port: number; host: string; path: string };
   normalize: NormalizationConfig;
 }
 
@@ -28,16 +28,20 @@ export default {
     server: {
       port: 9000,
       host: '127.0.0.1',
-      path: '/metrics'
-    }
+      path: '/metrics',
+    },
   } as Config,
   validator(config: Config) {
     if (typeof config.collectDefaultMetrics === 'boolean' && config.collectDefaultMetrics) {
-      throw Error('Invalid collectDefaultMetrics value. Can only be false or DefaultMetricsCollectorConfiguration');
+      throw Error(
+        'Invalid collectDefaultMetrics value. Can only be false or DefaultMetricsCollectorConfiguration'
+      );
     }
 
     if (typeof config.server === 'boolean' && config.server) {
-      throw Error('Invalid server value. Can only be false or { port: number, host: string, path: string }');
+      throw Error(
+        'Invalid server value. Can only be false or { port: number, host: string, path: string }'
+      );
     }
   },
 };
