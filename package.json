@@ -38,7 +38,7 @@
     "watch": "strapi-plugin watch",
     "watch:link": "strapi-plugin watch:link",
     "verify": "strapi-plugin verify",
-    "test:ts:back": "run -T tsc -p server/tsconfig.json"
+    "test:ts:back": "tsc -p server/tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@strapi/sdk-plugin": "^5.2.6",
