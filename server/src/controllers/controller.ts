@@ -1,4 +1,4 @@
-import prom from 'prom-client';
+import prom from '@prometheus-io/client';
 import type { Context } from 'koa';
 
 export default {

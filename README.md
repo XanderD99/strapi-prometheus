@@ -5,7 +5,7 @@
 [![license](https://img.shields.io/npm/l/strapi-prometheus)](https://github.com/XanderD99/strapi-prometheus/blob/main/LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/XanderD99/strapi-prometheus)](https://github.com/XanderD99/strapi-prometheus)
 
-A powerful middleware plugin that adds comprehensive Prometheus metrics to your Strapi application using `prom-client` 📈. Monitor your API performance, track system resources, and gain valuable insights into your application's behavior with just a few lines of configuration! 🚀
+A powerful middleware plugin that adds comprehensive Prometheus metrics to your Strapi application using `@prometheus-io/client` 📈. Monitor your API performance, track system resources, and gain valuable insights into your application's behavior with just a few lines of configuration! 🚀
 
 ## ✨ Features
 
@@ -49,12 +49,13 @@ Start Strapi and metrics are served at `http://127.0.0.1:9000/metrics` 📊. See
 
 ## 🤝 Compatibility
 
-| Strapi Version | Plugin Version | Status                |
-| -------------- | -------------- | --------------------- |
-| v5.x           | v2.x.x         | ✅ Fully Supported ⭐ |
-| v4.x           | v1.x.x         | ❌ EOL 🔧             |
+| Strapi Version | Plugin Version | Node.js | Status                 |
+| -------------- | -------------- | ------- | ---------------------- |
+| v5.x           | v3.x.x         | ≥ 22    | ✅ Fully Supported ⭐  |
+| v5.x           | v2.x.x         | ≥ 18    | 🔒 Security fixes only |
+| v4.x           | v1.x.x         | —       | ❌ EOL 🔧              |
 
-Upgrading from v1? See the [Migration Guide (v1 → v2)](docs/Migration-v1-to-v2.md).
+Upgrading? See the migration guides for [v2 → v3](docs/Migration-v2-to-v3.md) and [v1 → v2](docs/Migration-v1-to-v2.md).
 
 ## 📖 Documentation
 
@@ -79,7 +80,7 @@ This project is licensed under the [MIT License](LICENSE) - see the LICENSE file
 ## 🙏 Acknowledgments
 
 - [Prometheus](https://prometheus.io/) - The monitoring system that makes this all possible
-- [prom-client](https://github.com/siimon/prom-client) - The Node.js Prometheus client library
+- [@prometheus-io/client](https://github.com/prometheus/client_js) - The Node.js Prometheus client library
 - [Strapi](https://strapi.io/) - The leading open-source headless CMS
 - All [contributors](https://github.com/XanderD99/strapi-prometheus/contributors) who have helped improve this plugin
 

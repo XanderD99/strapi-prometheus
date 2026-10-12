@@ -1,6 +1,6 @@
 # 📊 Strapi Prometheus Plugin
 
-A Strapi v5 plugin that exposes Prometheus metrics for your application using `prom-client`. For installation, see the [README](https://github.com/XanderD99/strapi-prometheus#readme).
+A Strapi v5 plugin that exposes Prometheus metrics for your application using `@prometheus-io/client`. For installation, see the [README](https://github.com/XanderD99/strapi-prometheus#readme).
 
 ## 📖 Pages
 
@@ -9,6 +9,7 @@ A Strapi v5 plugin that exposes Prometheus metrics for your application using `p
 - [Path Normalization](Path-Normalization) — keep route cardinality under control
 - [Grafana Dashboards](Grafana-Dashboards)
 - [Troubleshooting](Troubleshooting)
+- [Migration v2 → v3](Migration-v2-to-v3)
 - [Migration v1 → v2](Migration-v1-to-v2)
 
 ## 🔗 Elsewhere
