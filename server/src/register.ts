@@ -1,5 +1,5 @@
 import type { Core } from '@strapi/strapi';
-import prom, { Gauge } from 'prom-client';
+import prom, { Gauge } from '@prometheus-io/client';
 import metricsMiddleware from './middlewares/metrics';
 
 const versionMetric = new Gauge({

@@ -1,4 +1,4 @@
-import { DefaultMetricsCollectorConfiguration, RegistryContentType } from 'prom-client';
+import { DefaultMetricsCollectorConfiguration, RegistryContentType } from '@prometheus-io/client';
 import { Context } from 'koa';
 
 export type PathNormalizationRule = [RegExp, string];

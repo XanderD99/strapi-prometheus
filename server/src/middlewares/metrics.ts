@@ -1,4 +1,4 @@
-import { exponentialBuckets, Histogram } from 'prom-client';
+import { exponentialBuckets, Histogram } from '@prometheus-io/client';
 import { Context } from 'koa';
 import { NormalizationConfig, PathNormalizationRule } from 'src/config';
 

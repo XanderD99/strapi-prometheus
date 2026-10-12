@@ -10,7 +10,7 @@ module.exports = {
     enabled: true,
     config: {
       // Optional: Collect Node.js default metrics
-      // See collectDefaultMetricsOption of prom-client for all options
+      // See DefaultMetricsCollectorConfiguration of @prometheus-io/client for all options
       collectDefaultMetrics: false, // or { prefix: 'my_app_' }
 
       // Optional: Add custom labels to all metrics
