@@ -24,7 +24,7 @@ module.exports = {
   prometheus: {  // ← Plugin name simplified
     enabled: true,
     config: {
-      // v2 config (see the configuration section in the README)
+      // v2 config (see the Configuration page)
     }
   }
 };
@@ -61,7 +61,7 @@ module.exports = {
 ## 🔄 Migration Steps
 
 1. **Update plugin name** in your configuration
-2. **Review new configuration options** (especially `server` settings)
+2. **Review new [configuration options](Configuration)** (especially `server` settings)
 3. **Update Prometheus scrape config** if using custom settings
 4. **Update Grafana dashboards** with new metric names
 5. **Test thoroughly** in development before production deployment

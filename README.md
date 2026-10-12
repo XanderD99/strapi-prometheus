@@ -41,265 +41,21 @@ yarn add prom-client
 pnpm add prom-client
 ```
 
-### 3. Configure the plugin ⚙️
-
-Create or update your `config/plugins.js` (or `config/plugins.ts` for TypeScript):
+### 3. Enable the plugin ⚙️
 
 ```js
 // config/plugins.js
 module.exports = {
-  // ...other plugins
   prometheus: {
     enabled: true,
-    config: {
-      // Optional: Collect Node.js default metrics
-      // See collectDefaultMetricsOption of prom-client for all options
-      collectDefaultMetrics: false, // or { prefix: 'my_app_' }
-      
-      // Optional: Add custom labels to all metrics
-      labels: { 
-        app: "my-strapi-app",
-        environment: "production"
-      },
-      
-      // Server configuration
-      // Set to false to expose metrics on your main Strapi server (not recommended)
-      server: {
-        port: 9000,           // Metrics server port
-        host: '127.0.0.1',    // Metrics server host (bind to 0.0.0.0 only if access is restricted at the network layer)
-        path: '/metrics'      // Metrics endpoint path
-      },
-      // OR disable separate server (use with caution):
-      // server: false
-      
-      // 🎯 Path Normalization Rules
-      normalize: [
-        [/\/(?:[a-z0-9]{24,25}|\d+)(?=\/|$)/, '/:id'], // Document IDs or numeric IDs
-        [/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file'], // Uploaded files with extensions
-      ]
-    }
-  }
+  },
 };
 ```
 
-For TypeScript projects:
-
-```ts
-// config/plugins.ts
-export default {
-  prometheus: {
-    enabled: true,
-    config: {
-      collectDefaultMetrics: false,
-      labels: { 
-        app: "my-strapi-app",
-        environment: process.env.NODE_ENV || "development"
-      },
-      server: {
-        port: parseInt(process.env.METRICS_PORT || '9000'),
-        host: process.env.METRICS_HOST || '127.0.0.1',
-        path: '/metrics'
-      },
-      
-      // Custom normalization function (alternative to array rules)
-      normalize: (ctx) => {
-        let path = ctx.path;
-        
-        // Custom logic for your specific needs
-        if (path.startsWith('/api/')) {
-          path = path.replace(/\/\d+/g, '/:id'); // Replace numeric IDs
-        }
-        
-        return path;
-      }
-    }
-  }
-};
-```
-
-## 📊 Available Metrics
-
-The plugin automatically collects the following metrics with intelligent route pattern detection ✨:
-
-| Metric Name | Description | Type | Labels |
-|-------------|-------------|------|--------|
-| `http_request_duration_seconds` | Duration of HTTP requests in seconds ⏱️ | Histogram | `method`, `route`, `status` |
-| `http_request_content_length_bytes` | Size of request payloads in bytes 📤 | Histogram | `method`, `route`, `status` |
-| `http_response_content_length_bytes` | Size of response payloads in bytes 📥 | Histogram | `method`, `route`, `status` |
-| `strapi_version_info` | Strapi version information 🏷️ | Gauge | `version` |
-| `lifecycle_duration_seconds` | Duration of Strapi database lifecycle events 💾 | Histogram | `event` |
-
-### Optional System Metrics
-
-When `collectDefaultMetrics` is enabled, you'll also get Node.js process metrics:
-
-- `process_cpu_user_seconds_total` - CPU time spent in user mode
-- `process_cpu_system_seconds_total` - CPU time spent in system mode  
-- `process_start_time_seconds` - Process start time
-- `process_resident_memory_bytes` - Resident memory size
-- `nodejs_heap_size_total_bytes` - Total heap size
-- `nodejs_heap_size_used_bytes` - Used heap size
-- `nodejs_external_memory_bytes` - External memory usage
-- And more...
-
-## 🎯 Smart Path Normalization
-
-The plugin features intelligent path normalization to ensure optimal metric cardinality by grouping similar routes together ✨
-
-### 📝 Configuration Options
-
-You can configure path normalization in two ways:
-
-#### 1. **Array of Regex Rules** (Recommended)
-
-Use an array of `[RegExp, replacement]` tuples to define normalization patterns:
-
-```js
-normalize: [
-  [/\/(?:[a-z0-9]{24,25}|\d+)(?=\/|$)/, '/:id'], // Document IDs or numeric IDs
-  [/\/uploads\/[^\/]+\.[a-zA-Z0-9]+/, '/uploads/:file'], // Uploaded files with extensions
-  
-  // Custom patterns
-  [/\/users\/\d+/, '/users/:id'],                                   // /users/123
-  [/\/orders\/ORD\d+/, '/orders/:orderCode']                        // /orders/ORD12345
-]
-```
-
-#### 2. **Custom Function**
-
-Use a function for dynamic normalization logic:
-
-```js
-normalize: (ctx) => {
-  let path = ctx.path;
-  
-  // Custom normalization logic
-  if (path.startsWith('/api/')) {
-    path = path.replace(/\/\d+/g, '/:id');           // Replace numeric IDs
-    path = path.replace(/\/[a-f0-9-]{36}/gi, '/:uuid'); // Replace UUIDs
-  }
-  
-  // Multi-tenant example
-  if (path.startsWith('/tenant/')) {
-    path = path.replace(/^\/tenant\/[^\/]+/, '/tenant/:id');
-  }
-  
-  return path;
-}
-```
-
-### 🏷️ Built-in Patterns
-
-The plugin includes pre-configured patterns for common Strapi routes:
-
-| Original Path | Normalized Path | Description |
-|--------------|----------------|-------------|
-| `/api/posts/123` | `/api/posts/:id` | API resource with ID |
-| `/api/posts/123/comments/456` | `/api/posts/:id/comments/:id` | Nested resources |
-| `/admin/content-manager/collection-types/api::post.post/123` | `/admin/content-manager/:type/:contentType/:id` | Admin content manager |
-| `/uploads/image.jpg` | `/uploads/:file` | File uploads |
-| `/en/api/posts/123` | `/:locale/api/posts/:id` | i18n localized routes |
-| `/fr-FR/dashboard` | `/:locale/dashboard` | Locale-specific pages |
-
-### 🚀 Benefits
-
-- ✅ **Low Cardinality** - Groups similar routes to prevent metric explosion
-- ✅ **Prometheus-Friendly** - Follows Prometheus best practices
-- ✅ **Flexible** - Support both regex patterns and custom functions  
-- ✅ **Performance** - Efficient pattern matching with minimal overhead
-- ✅ **Strapi-Aware** - Built-in knowledge of Strapi routing conventions
-
-## 🚀 Quick Start
-
-1. 📦 Install and configure the plugin (see [Installation](#-installation))
-2. 🎬 Start your Strapi application
-3. 📊 Metrics will be available at `http://localhost:9000/metrics`
-4. 🔗 Configure Prometheus to scrape this endpoint
-
-## 📊 Accessing Metrics
-
-### Dedicated Server (Default & Recommended)
-
-By default, metrics are served on a separate server:
-
-```bash
-curl http://localhost:9000/metrics
-```
-
-### Main Strapi Server (Not Recommended)
-
-If you set `server: false`, metrics are mounted on your main Strapi server's
-content-api at `/api/metrics`:
-
-```bash
-# Requires an API token
-curl -H "Authorization: Bearer YOUR_API_TOKEN" http://localhost:1337/api/metrics
-```
-
-> [!WARNING]
-> The `/api/metrics` route is **not** authenticated by the plugin. **Do NOT grant
-> the `metrics.find` permission to the Public role** — doing so makes the full
-> Prometheus exposition world-readable without a token. Always protect it with an
-> API key/token (and restrict access at the network layer where possible). The
-> plugin logs this warning at startup when `server: false`.
-
-## 👮‍♀️ Security Considerations
+Start Strapi and metrics are served at `http://127.0.0.1:9000/metrics` 📊. See [Configuration](docs/Configuration.md) for custom labels, server settings, and path normalization.
 
 > [!CAUTION]
-> The metrics endpoint is **not authenticated**. Anyone who can reach it receives the full Prometheus exposition. Prometheus metrics can reveal sensitive operational detail about your application — exact Strapi version and patch level, your content-type/model names (via `lifecycle_duration_seconds`), internal route paths, request volume and error rates (including failed-login counts on `/api/auth/local`), and process/runtime telemetry such as memory usage, open file descriptors, and event-loop lag. This information is valuable for fingerprinting and planning targeted attacks, so the endpoint must never be exposed to untrusted networks.
-
-### Default: bound to localhost
-
-By default the plugin starts a dedicated metrics server bound to `127.0.0.1:9000`. This keeps the endpoint reachable only from the host itself (and from other containers sharing the same network namespace), so a default install is **not** exposed to your network or the public internet.
-
-> [!IMPORTANT]
-> A separate port is **not** a security boundary on its own. If you bind the metrics server to `0.0.0.0` (all interfaces), publish the port from a Docker container (`-p 9000:9000`), or expose it through a Kubernetes `Service`/`LoadBalancer`, the endpoint becomes reachable by anyone who can route to it — there is no built-in authentication to stop them. The plugin logs a startup warning when `host` is set to `0.0.0.0`.
-
-### Exposing metrics to a scraper
-
-Prometheus usually needs to scrape from another host, so you will often need to make the endpoint reachable beyond `127.0.0.1`. Do this at the network layer rather than opening it to the world:
-
-**Option A — keep it on localhost and scrape locally.** Run a Prometheus agent / node-exporter sidecar on the same host (or in the same Kubernetes pod) and let it scrape `127.0.0.1:9000`. This is the simplest and safest setup.
-
-**Option B — bind to a private interface and firewall it.** Bind to a specific internal address and restrict access to your monitoring network:
-
-```js
-server: {
-  port: 9000,
-  host: '10.0.0.5',   // private/internal interface only — never a public IP
-  path: '/metrics'
-}
-```
-
-```bash
-# Example: only allow your Prometheus host to reach port 9000 (Linux, ufw)
-ufw allow from 10.0.0.10 to any port 9000 proto tcp
-ufw deny 9000
-```
-
-**Option C — put it behind a reverse proxy that enforces auth.** Bind to `127.0.0.1` and let nginx (or Traefik, Caddy, etc.) terminate TLS and require a credential before forwarding:
-
-```nginx
-location /metrics {
-    auth_basic           "metrics";
-    auth_basic_user_file /etc/nginx/.htpasswd;   # or mTLS / an allow-list
-    proxy_pass           http://127.0.0.1:9000/metrics;
-}
-```
-
-**Docker / Kubernetes note:** do not publish port 9000 to the host (`-p 9000:9000`) or expose it via a public `Service`/`LoadBalancer`. Keep it on an internal network and scrape it from within the cluster.
-
-### Alternative: Main Server Integration
-
-You can expose metrics on your main Strapi server by setting `server: false`. The
-route is mounted on the content-api at `/api/metrics`:
-
-- ⚠️ **Not authenticated by the plugin** - Do NOT grant the `metrics.find` permission to the Public role, or your metrics become world-readable without a token
-- ⚠️ **Use an API key/token** - Protect the endpoint with a Strapi API token and restrict access at the network layer where possible
-- ⚠️ **Potential exposure** - Metrics endpoint shares the main application's surface
-- ⚠️ **Performance impact** - Additional load on the main server
-
-**We recommend keeping the dedicated server bound to `127.0.0.1` (the default) and exposing it only through one of the network-layer options above.**
+> The metrics endpoint is **not authenticated**. Read the [security policy](.github/SECURITY.md) before exposing it beyond localhost.
 
 ## 🤝 Compatibility
 
@@ -308,80 +64,16 @@ route is mounted on the content-api at `/api/metrics`:
 | v5.x | v2.x.x | ✅ Fully Supported ⭐ |
 | v4.x | v1.x.x | ❌ EOL 🔧 |
 
-> **Note**: For new projects, we recommend using Strapi v5.x with the latest plugin version! 🎯
+Upgrading from v1? See the [Migration Guide (v1 → v2)](docs/Migration-v1-to-v2.md).
 
-## 📊 Grafana Dashboards
+## 📖 Documentation
 
-Ready-to-use Grafana dashboards for visualizing your Strapi metrics:
-
-### Official Dashboards
-
-- **[Dashboard 14565](https://grafana.com/grafana/dashboards/14565)** - Comprehensive Strapi monitoring dashboard
-
-### Contributing Dashboards
-
-Have a great dashboard? We'd love to feature it! Please [open a pull request](https://github.com/XanderD99/strapi-prometheus) with your dashboard JSON. 🎨
-
-## 🔍 Troubleshooting
-
-### Common Issues
-
-#### Metrics server not starting
-
-- Check if port 9000 is already in use
-- Verify firewall settings
-- Check Strapi logs for error messages
-
-#### No metrics appearing
-
-- Ensure the plugin is properly enabled in `config/plugins.js`
-- Verify that `prom-client` is installed
-- Check that requests are being made to your Strapi application
-
-#### Memory usage increasing
-
-- Consider disabling `collectDefaultMetrics` if not needed
-- Review custom labels - avoid high-cardinality labels
-- Monitor Prometheus scrape interval
-
-### 🆘 Getting Help
-
-- 🐛 [Report bugs](https://github.com/XanderD99/strapi-prometheus/issues)
-- 💡 [Request features](https://github.com/XanderD99/strapi-prometheus/issues)
-- 📖 [Read the documentation](https://github.com/XanderD99/strapi-prometheus)
-- ☕ [Buy me a coffee](https://www.buymeacoffee.com/xanderd)
-
-## 🏗️ v1 → v2 Migration Guide
-
-Upgrading from v1 (Strapi v4) to v2 (Strapi v5)? See the dedicated [Migration Guide (v1 → v2)](docs/migration-v1-to-v2.md) for plugin-name, configuration, metric/label, and breaking changes.
-
-## 🤝 Contributing
-
-We welcome contributions! Here's how you can help:
-
-### 🐛 Reporting Issues
-
-- Use the [issue tracker](https://github.com/XanderD99/strapi-prometheus/issues) 📝
-- Search existing issues before creating new ones 🔍
-- Provide clear reproduction steps 📋
-- Include environment details (Strapi version, Node.js version, OS) 💻
-
-### 💻 Development
-
-1. Fork the repository 🍴
-2. Create a feature branch: `git checkout -b feature/amazing-feature` 🌿
-3. Make your changes ✨
-4. Add tests if applicable 🧪
-5. Commit with clear messages: `git commit -m 'Add amazing feature'` 💬
-6. Push to your branch: `git push origin feature/amazing-feature` 🚀
-7. Open a Pull Request 🔄
-
-### 📝 Documentation
-
-- Improve README documentation 📖
-- Add code examples 💡
-- Create tutorials or blog posts ✍️
-- Share Grafana dashboards 📊
+- [Configuration](docs/Configuration.md)
+- [Metrics](docs/Metrics.md)
+- [Path Normalization](docs/Path-Normalization.md)
+- [Grafana Dashboards](docs/Grafana-Dashboards.md)
+- [Troubleshooting](docs/Troubleshooting.md)
+- [Security](.github/SECURITY.md) · [Contributing](.github/CONTRIBUTING.md) · [Support](.github/SUPPORT.md)
 
 ## 📜 License
 
