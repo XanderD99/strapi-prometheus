@@ -11,7 +11,6 @@
 ### No metrics appearing
 
 - Ensure the plugin is properly enabled in `config/plugins.js`
-- Verify that `prom-client` is installed
 - Check that requests are being made to your Strapi application
 
 ### Memory usage increasing

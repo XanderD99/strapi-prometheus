@@ -1,5 +1,5 @@
 import { Core } from '@strapi/strapi';
-import { Histogram } from 'prom-client';
+import { Histogram } from '@prometheus-io/client';
 
 const lifecycleDurationSeconds = new Histogram({
   name: 'lifecycle_duration_seconds',
