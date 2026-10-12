@@ -4,20 +4,20 @@
 
 The plugin automatically collects the following metrics with intelligent route pattern detection ✨:
 
-| Metric Name | Description | Type | Labels |
-|-------------|-------------|------|--------|
-| `http_request_duration_seconds` | Duration of HTTP requests in seconds ⏱️ | Histogram | `method`, `route`, `status` |
-| `http_request_content_length_bytes` | Size of request payloads in bytes 📤 | Histogram | `method`, `route`, `status` |
-| `http_response_content_length_bytes` | Size of response payloads in bytes 📥 | Histogram | `method`, `route`, `status` |
-| `strapi_version_info` | Strapi version information 🏷️ | Gauge | `version` |
-| `lifecycle_duration_seconds` | Duration of Strapi database lifecycle events 💾 | Histogram | `event` |
+| Metric Name                          | Description                                     | Type      | Labels                      |
+| ------------------------------------ | ----------------------------------------------- | --------- | --------------------------- |
+| `http_request_duration_seconds`      | Duration of HTTP requests in seconds ⏱️         | Histogram | `method`, `route`, `status` |
+| `http_request_content_length_bytes`  | Size of request payloads in bytes 📤            | Histogram | `method`, `route`, `status` |
+| `http_response_content_length_bytes` | Size of response payloads in bytes 📥           | Histogram | `method`, `route`, `status` |
+| `strapi_version_info`                | Strapi version information 🏷️                   | Gauge     | `version`                   |
+| `lifecycle_duration_seconds`         | Duration of Strapi database lifecycle events 💾 | Histogram | `event`                     |
 
 ### Optional System Metrics
 
 When `collectDefaultMetrics` is enabled, you'll also get Node.js process metrics:
 
 - `process_cpu_user_seconds_total` - CPU time spent in user mode
-- `process_cpu_system_seconds_total` - CPU time spent in system mode  
+- `process_cpu_system_seconds_total` - CPU time spent in system mode
 - `process_start_time_seconds` - Process start time
 - `process_resident_memory_bytes` - Resident memory size
 - `nodejs_heap_size_total_bytes` - Total heap size

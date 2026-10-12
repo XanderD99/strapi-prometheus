@@ -59,10 +59,10 @@ Start Strapi and metrics are served at `http://127.0.0.1:9000/metrics` 📊. See
 
 ## 🤝 Compatibility
 
-| Strapi Version | Plugin Version | Status |
-|---------------|----------------|---------|
-| v5.x | v2.x.x | ✅ Fully Supported ⭐ |
-| v4.x | v1.x.x | ❌ EOL 🔧 |
+| Strapi Version | Plugin Version | Status                |
+| -------------- | -------------- | --------------------- |
+| v5.x           | v2.x.x         | ✅ Fully Supported ⭐ |
+| v4.x           | v1.x.x         | ❌ EOL 🔧             |
 
 Upgrading from v1? See the [Migration Guide (v1 → v2)](docs/Migration-v1-to-v2.md).
 

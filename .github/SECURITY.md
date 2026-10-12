@@ -3,9 +3,9 @@
 ## Supported Versions
 
 | Strapi Version | Plugin Version | Supported |
-|---------------|----------------|-----------|
-| v5.x | v2.x.x | ✅ |
-| v4.x | v1.x.x | ❌ EOL |
+| -------------- | -------------- | --------- |
+| v5.x           | v2.x.x         | ✅        |
+| v4.x           | v1.x.x         | ❌ EOL    |
 
 ## Reporting a Vulnerability
 

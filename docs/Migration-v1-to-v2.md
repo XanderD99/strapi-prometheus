@@ -12,8 +12,8 @@ module.exports = {
     enabled: true,
     config: {
       // v1 config
-    }
-  }
+    },
+  },
 };
 ```
 
@@ -21,34 +21,35 @@ module.exports = {
 
 ```js
 module.exports = {
-  prometheus: {  // ← Plugin name simplified
+  prometheus: {
+    // ← Plugin name simplified
     enabled: true,
     config: {
       // v2 config (see the Configuration page)
-    }
-  }
+    },
+  },
 };
 ```
 
 ## 🚀 New Features in v2
 
 - **Dedicated metrics server** - Default behavior for better security
-- **Simplified configuration** - Easier setup and maintenance  
+- **Simplified configuration** - Easier setup and maintenance
 - **Strapi v5 support** - Future-ready compatibility
 - **Enhanced metrics** - More comprehensive monitoring
 - **Improved performance** - Optimized for production use
 
 ## 📊 Metric and Label Changes
 
-| v1 Metric | v2 Metric | Change |
-|-----------|-----------|---------|
-| `http_request_duration_s` | `http_request_duration_seconds` | ✅ Renamed for clarity |
-| `http_request_size_bytes` | `http_request_content_length_bytes` | ✅ Renamed for accuracy |
-| `http_response_size_bytes` | `http_response_content_length_bytes` | ✅ Renamed for accuracy |
-| Labels: `path` | Labels: `route` | ✅ More consistent route patterns |
-| Apollo metrics | ❌ | 🗑️ Removed - use [apollo-prometheus-exporter](https://github.com/bfmatei/apollo-prometheus-exporter) |
-| - | `http_requests_total` | ✅ New counter metric |
-| - | `http_active_requests` | ✅ New gauge metric |
+| v1 Metric                  | v2 Metric                            | Change                                                                                               |
+| -------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| `http_request_duration_s`  | `http_request_duration_seconds`      | ✅ Renamed for clarity                                                                               |
+| `http_request_size_bytes`  | `http_request_content_length_bytes`  | ✅ Renamed for accuracy                                                                              |
+| `http_response_size_bytes` | `http_response_content_length_bytes` | ✅ Renamed for accuracy                                                                              |
+| Labels: `path`             | Labels: `route`                      | ✅ More consistent route patterns                                                                    |
+| Apollo metrics             | ❌                                   | 🗑️ Removed - use [apollo-prometheus-exporter](https://github.com/bfmatei/apollo-prometheus-exporter) |
+| -                          | `http_requests_total`                | ✅ New counter metric                                                                                |
+| -                          | `http_active_requests`               | ✅ New gauge metric                                                                                  |
 
 ## 🏷️ Enhanced Label Strategy
 
