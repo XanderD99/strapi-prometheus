@@ -4,7 +4,7 @@
 
 | Strapi Version | Plugin Version | Supported              |
 | -------------- | -------------- | ---------------------- |
-| v5.x           | v3.x.x         | ✅                     |
+| v5.57+         | v3.x.x         | ✅                     |
 | v5.x           | v2.x.x         | ✅ Security fixes only |
 | v4.x           | v1.x.x         | ❌ EOL                 |
 

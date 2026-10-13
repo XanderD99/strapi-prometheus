@@ -51,7 +51,7 @@ Start Strapi and metrics are served at `http://127.0.0.1:9000/metrics` 📊. See
 
 | Strapi Version | Plugin Version | Node.js | Status                 |
 | -------------- | -------------- | ------- | ---------------------- |
-| v5.x           | v3.x.x         | ≥ 22    | ✅ Fully Supported ⭐  |
+| v5.57+         | v3.x.x         | ≥ 22    | ✅ Fully Supported ⭐  |
 | v5.x           | v2.x.x         | ≥ 18    | 🔒 Security fixes only |
 | v4.x           | v1.x.x         | —       | ❌ EOL 🔧              |
 
