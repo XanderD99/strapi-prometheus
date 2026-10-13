@@ -4,6 +4,7 @@ v3 replaces the deprecated [`prom-client`](https://www.npmjs.com/package/prom-cl
 
 ## ⚠️ Breaking Changes
 
+- **Strapi 5.57 or later is required.** The plugin's peer dependency is now `@strapi/strapi ^5.57.0`.
 - **Node.js 22 or later is required.** `@prometheus-io/client` supports Node `^22 || ^24 || >=26`. Stay on v2 if you cannot upgrade from Node 20 yet; v2 receives security fixes only.
 - **Custom metrics must use `@prometheus-io/client`.** The plugin serves the default registry of `@prometheus-io/client`. Metrics you register through `prom-client` live in a different registry and no longer appear on the metrics endpoint.
 
@@ -18,7 +19,7 @@ No existing metric is renamed or removed.
 
 ## 🔄 Migration Steps
 
-1. **Upgrade Node.js** to 22 or later
+1. **Upgrade Node.js** to 22 or later and **Strapi** to 5.57 or later
 2. **Update the plugin**: `npm install strapi-prometheus@3`
 3. **If you register custom metrics**, switch them to the new client:
 

@@ -43,15 +43,15 @@
     "format:check": "prettier --check ."
   },
   "devDependencies": {
-    "@strapi/sdk-plugin": "^5.2.6",
-    "@strapi/strapi": "^5.0.0",
+    "@strapi/sdk-plugin": "^6.1.1",
+    "@strapi/strapi": "^5.57.0",
     "@strapi/typescript-utils": "^5.0.0",
     "prettier": "^3.9.9",
     "typescript": "^5.6.2"
   },
   "peerDependencies": {
-    "@strapi/sdk-plugin": "^5.2.6",
-    "@strapi/strapi": "^5.0.0"
+    "@strapi/sdk-plugin": "^6.1.1",
+    "@strapi/strapi": "^5.57.0"
   },
   "strapi": {
     "kind": "plugin",
