@@ -1,6 +1,6 @@
 import { exponentialBuckets, Histogram } from '@prometheus-io/client';
 import { Context } from 'koa';
-import { NormalizationConfig, PathNormalizationRule } from 'src/config';
+import { NormalizationConfig, PathNormalizationRule } from '../config';
 
 const requestDurationSeconds = new Histogram({
   name: 'http_request_duration_seconds',
